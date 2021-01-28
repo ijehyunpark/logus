@@ -1,0 +1,34 @@
+language: java
+jdk:
+  - openjdk11
+
+cache:
+  directories:
+  - "$HOME/.m2/repository"
+  - '$HOME/.gradle'
+  
+script: "./gradlew clean build"
+
+before_install:
+  - chmod +x gradlew  
+
+before_deploy:
+  - mkdir -p deploy
+  - cp build/libs/*.jar deploy
+    
+deploy:
+  provider: releases
+  api_key: $TOKEN
+  file: 
+    - "deploy/webbot-v0.0.1.jar"
+    
+  file_glob: true
+  skip_cleanup: true
+  on:
+    tags: true
+    branch: master
+    repo: ijehyunpark/logus
+branches:
+  only:
+    - master
+    - /v\d{1,}.\d{1,}.{1,}/

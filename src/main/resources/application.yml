@@ -1,0 +1,12 @@
+server:
+  address: localhost
+  port: 8080
+  servlet:
+    encoding: #Encoding UTF-8
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  profiles:
+    active: local
