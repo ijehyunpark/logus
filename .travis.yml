@@ -26,9 +26,9 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    branch: master
+    branch: main
     repo: ijehyunpark/logus
 branches:
   only:
-    - master
+    - main
     - /v\d{1,}.\d{1,}.{1,}/
