@@ -42,6 +42,11 @@ dependencies {
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
     compile group: 'io.swagger', name: 'swagger-annotations', version: '1.5.22'
     compile group: 'io.swagger', name: 'swagger-models', version: '1.5.22'
+    
+    
+    implementation'org.springframework.boot:spring-boot-starter-validation'
+    
+    testImplementation 'org.mockito:mockito-core:3.3.3'
 }
 
 test {

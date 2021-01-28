@@ -23,7 +23,7 @@ deploy:
     - "deploy/webbot-v0.0.1.jar"
     
   file_glob: true
-  skip_cleanup: true
+  cleanup: false
   on:
     tags: true
     branch: main
