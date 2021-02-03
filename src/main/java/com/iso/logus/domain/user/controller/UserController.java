@@ -17,7 +17,7 @@ import com.iso.logus.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping(value = "/apis/user")
+@RequestMapping(value = "/api/user")
 @RequiredArgsConstructor
 public class UserController {
 	

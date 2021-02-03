@@ -55,6 +55,24 @@ test {
 }
 
 asciidoctor {
-	inputs.dir snippetsDir
+	attributes "snippets": snippetsDir
 	dependsOn test
+}
+
+bootJar {
+	dependsOn asciidoctor 
+	from ("${asciidoctor.outputDir}/html5") { 
+		into 'static/docs'
+	}
+}
+
+task copyDocument(type: Copy) {
+	dependsOn bootJar
+	
+	from file("build/asciidoc/html5/")
+	into file("src/main/resources/static/docs")
+}
+
+build {
+	dependsOn copyDocument
 }

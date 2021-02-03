@@ -1,0 +1,90 @@
+= logus Api Document
+:doctype: book
+:toc: left
+:toclevels: 4
+:sectlinks:
+:source-highlighter: highlightjs
+
+= 개요
+
+== 지원하는 Method(Verb)
+
+|===
+| 행위 | 사용법
+
+| `GET`
+| 특정 리소스를 조회합니다.
+
+| `POST`
+| 새로운 리소스를 생성합니다.
+
+| `PUT`
+| 특정 리소스의 모든 정보를 수정합니다.
+
+| `PATCH`
+| 특정 리소스의 일부 정보를 수정합니다.
+
+| `DELETE`
+| 특정 리소스를 삭제합니다.
+
+| `OPTIONS`
+| 현제 url가 지원하는 모든 method를 응답합니다.
+
+| `Head`
+| 요청에 대한 Header 정보만 응답합니다.
+|===
+
+= 리소스
+
+== 사용자(User)
+
+=== uid(유저 아이디)로 유저 검색
+
+==== Request
+
+===== Request HTTP Example
+include::{snippets}/user-findUserByUid/http-request.adoc[]
+
+==== Response
+include::{snippets}/user-findUserByUid/response-fields.adoc[]
+
+===== Response HTTP Example
+include::{snippets}/user-findUserByUid/http-response.adoc[]
+
+=== 새로운 유저 추가(가입)
+
+==== Request
+include::{snippets}/user-signUp/request-fields.adoc[]
+
+===== Request HTTP Example
+include::{snippets}/user-signUp/http-request.adoc[]
+
+==== Response
+
+===== Response HTTP Example
+include::{snippets}/user-signUp/http-response.adoc[]
+
+=== 유저 이름 변경
+
+==== Request
+include::{snippets}/user-changeUserName/request-fields.adoc[]
+
+===== Request HTTP Example
+include::{snippets}/user-changeUserName/http-request.adoc[]
+
+==== Response
+
+===== Response HTTP Example
+include::{snippets}/user-changeUserName/http-response.adoc[]
+
+=== 유저 삭제
+
+==== Request
+
+===== Request HTTP Example
+include::{snippets}/user-deleteUserByUid/http-request.adoc[]
+
+==== Response
+
+===== Response HTTP Example
+include::{snippets}/user-deleteUserByUid/http-response.adoc[]
