@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.iso.logus.domain.user.dto.UserDto;
 import com.iso.logus.domain.user.service.UserService;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -24,23 +26,37 @@ public class UserController {
 	private final UserService userService;
 	
 	@GetMapping(value = "/{uid}")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
+	})
 	public UserDto.Response findUserByUid(@PathVariable String uid) {
 		return new UserDto.Response(userService.findByUid(uid));
 	}
 	
-	@PostMapping
+	@PostMapping(value = "/join")
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public void SignUp(@RequestBody UserDto.SingUpRequest singUpRequest) {
-		userService.SignUp(singUpRequest);
+	public void SignUp(@RequestBody UserDto.SignUpRequest signUpRequest) {
+		userService.SignUp(signUpRequest);
 	}
 	
 	@PatchMapping(value = "/{uid}")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
+	})
 	public void changeUserName(@PathVariable String uid, @RequestBody UserDto.ChangeNameRequest changeNameRequest) {
 		userService.changeUserName(uid, changeNameRequest);
 	}
 	
 	@DeleteMapping(value = "/{uid}")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
+	})
 	public void deleteUserByUid(@PathVariable String uid) {
 		userService.deleteUserByUid(uid);
+	}
+	
+	@PostMapping(value = "/login")
+	public String signIn(@RequestBody UserDto.SignInRequest signInRequest) {
+		return userService.signIn(signInRequest);
 	}
 }

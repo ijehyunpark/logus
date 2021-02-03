@@ -2,7 +2,6 @@ package com.iso.logus.domain.user.dto;
 
 import java.time.LocalDateTime;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
 import com.iso.logus.domain.user.domain.Password;
@@ -33,7 +32,7 @@ public class UserDto {
 	
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
-	public static class SingUpRequest {
+	public static class SignUpRequest {
 		@NotEmpty
 		private String uid;
 		@NotEmpty
@@ -42,7 +41,7 @@ public class UserDto {
 		private String password;
 		
 		@Builder
-		public SingUpRequest(String uid, String name, String password) {
+		public SignUpRequest(String uid, String name, String password) {
 			this.uid = uid;
 			this.name = name;
 			this.password = password;
@@ -66,6 +65,18 @@ public class UserDto {
 			this.name = name;
 		}
 		
+	}
+	
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PROTECTED)
+	public static class SignInRequest {
+		private String uid;
+		private String password;
 		
+		@Builder
+		public SignInRequest(String uid, String password) {
+			this.uid = uid;
+			this.password = password;
+		}
 	}
 }

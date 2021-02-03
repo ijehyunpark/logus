@@ -96,13 +96,13 @@ public class UserControllerTest {
 	@Test
 	public void SignUpTest() throws Exception {
 		//given
-		UserDto.SingUpRequest dto = UserDto.SingUpRequest.builder()
+		UserDto.SignUpRequest dto = UserDto.SignUpRequest.builder()
 															.uid("testUser")
 															.name("test-user")
 															.password("test1234")
 															.build();
 		
-		//when
+		//when	
 		ResultActions result = mockMvc.perform(post("/api/user")
 					.content(objectMapper.writeValueAsString(dto))
 					.contentType(MediaType.APPLICATION_JSON)

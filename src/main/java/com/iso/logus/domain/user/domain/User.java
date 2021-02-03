@@ -1,9 +1,14 @@
 package com.iso.logus.domain.user.domain;
 
+import java.util.Collection;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.iso.logus.domain.user.dto.UserDto;
 import com.iso.logus.global.domain.TimeEntity;
@@ -16,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends TimeEntity {
+public class User extends TimeEntity implements UserDetails {
 	@Id
 	@Column(name = "uid", nullable = false)
 	private String uid;
@@ -25,16 +30,51 @@ public class User extends TimeEntity {
 	private String name;
 	
 	@Embedded
-	private Password password;
+	private Password passwordDetail;
 	
 	@Builder
 	public User (String uid, String name, Password password){
 		this.uid = uid;
 		this.name = name;
-		this.password = password;
+		this.passwordDetail = password;
 	}
 	
 	public void changeName(UserDto.ChangeNameRequest changeNameRequest) {
 		this.name = changeNameRequest.getName();
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return null;
+	}
+
+	@Override
+	public String getUsername() {
+		return this.name;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+
+	@Override
+	public String getPassword() {
+		return this.passwordDetail.getValue();
 	}
 }
