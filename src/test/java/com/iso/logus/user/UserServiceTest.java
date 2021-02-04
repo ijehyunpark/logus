@@ -6,14 +6,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +31,9 @@ import com.iso.logus.domain.user.domain.User;
 import com.iso.logus.domain.user.domain.UserRepository;
 import com.iso.logus.domain.user.dto.UserDto;
 import com.iso.logus.domain.user.exception.UserNotFoundException;
+import com.iso.logus.domain.user.exception.WrongPasswordException;
 import com.iso.logus.domain.user.service.UserService;
+import com.iso.logus.global.jwt.JwtTokenProvider;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
@@ -41,6 +44,10 @@ public class UserServiceTest {
 	
 	@Mock
 	private UserRepository userRepository;
+	
+	@Mock
+	private JwtTokenProvider jwtTokenProvider;
+	
 	private User user;
 	
 	@BeforeEach
@@ -59,7 +66,7 @@ public class UserServiceTest {
 		given(userRepository.findByUid("testUser")).willReturn(Optional.of(user));
 		
 		//when
-		final User findUser = userService.findByUid("testUser");
+		final User findUser = userService.findUserByUid("testUser");
 		
 		//then
 		assertNotNull(findUser);
@@ -163,5 +170,78 @@ public class UserServiceTest {
 		});
 		
 		//then
+	}
+	
+	@Test
+	@DisplayName("signIn: 로그인 테스트_성공")
+	public void signInTest_success() {
+		//given
+		given(userRepository.findByUid("testUser")).willReturn(Optional.of(user));
+		given(jwtTokenProvider.createToken("testUser")).willReturn("DxdDIsovusi...");
+		UserDto.SignInRequest signInRequest = UserDto.SignInRequest.builder()
+																	.uid("testUser")
+																	.password("password")
+																	.build();
+		
+		//when
+		String resultToken = userService.signIn(signInRequest);
+		
+		//then
+		assertNotNull(resultToken);
+		assertNotSame("", resultToken);
+	}
+	
+	@Test
+	@DisplayName("signIn: 로그인 테스트_실패: 잘못된 비밀번호")
+	public void signInTest_fail1() {
+		//given
+		given(userRepository.findByUid("testUser")).willReturn(Optional.of(user));
+		UserDto.SignInRequest signInRequest = UserDto.SignInRequest.builder()
+																	.uid("testUser")
+																	.password("wrong")
+																	.build();
+		
+		//when
+		assertThrows(WrongPasswordException.class, () -> {
+			String resultToken = userService.signIn(signInRequest);
+		});
+		
+		//then
+	}
+	
+	@Test
+	@DisplayName("signIn: 로그인 테스트_실패:없는 계정")
+	public void signInTest_fail2() {
+		//given
+		given(userRepository.findByUid("empty")).willReturn(Optional.empty());
+		UserDto.SignInRequest signInRequest = UserDto.SignInRequest.builder()
+																	.uid("empty")
+																	.password("password")
+																	.build();
+		
+		//when
+		assertThrows(UserNotFoundException.class, () -> {
+			String resultToken = userService.signIn(signInRequest);
+		});
+		
+		//then
+	}
+	
+	@Test
+	@DisplayName("findByUserName: 이름으로 유저 찾기")
+	public void findByUserNameTest() {
+		//given
+		User sample1 = User.builder()
+					.uid("39483")
+					.password(Password.builder().value("password").build())
+					.name("test-user")
+					.build();
+		given(userRepository.findByName("test-user")).willReturn(List.of(user, sample1));
+		
+		//when
+		List<UserDto.Response> dto = userService.findByUserName("test-user");
+		
+		//then
+		assertNotNull(dto);
 	}
 }

@@ -1,6 +1,9 @@
 package com.iso.logus.domain.user.service;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,14 +26,20 @@ public class UserService {
 	private final JwtTokenProvider JwtTokenProvider;
 	
 	@Transactional(readOnly = true)
-	public User findByUid(String uid) {
+	public User findUserByUid(String uid) {
 		return userRepository.findByUid(uid).orElseThrow(() -> new UserNotFoundException(uid));
+	}
+	
+	@Transactional(readOnly = true)
+	public UserDto.Response findByUid(String uid) {
+		return new UserDto.Response(findUserByUid(uid));
 	}
 	
 	@Transactional(readOnly = true)
 	public boolean isExistedUid(String uid) {
 		return userRepository.existsByUid(uid);
 	}
+	
 	public void SignUp(UserDto.SignUpRequest signUpRequest) {
 		if(isExistedUid(signUpRequest.getUid()))
 			throw new UidDuplicationException(signUpRequest.getUid());
@@ -48,9 +57,23 @@ public class UserService {
 	}
 	
 	public String signIn(UserDto.SignInRequest signInRequest) {
-		User user = findByUid(signInRequest.getUid());
+		User user = findUserByUid(signInRequest.getUid());
 		if(!user.getPasswordDetail().isMatched(signInRequest.getPassword()))
 			throw new WrongPasswordException();
 		return JwtTokenProvider.createToken(user.getUid());
+	}
+	
+		
+	@Transactional(readOnly = true)
+	public List<UserDto.Response> findByUserName(String name) {
+		List<User> userList = userRepository.findByName(name);
+		
+		if(userList.isEmpty())
+			throw new UserNotFoundException(null);
+		
+		List<UserDto.Response> dtoList = new ArrayList<>();
+		for(User user : userList) 
+			dtoList.add(new UserDto.Response(user));
+		return dtoList;
 	}
 }

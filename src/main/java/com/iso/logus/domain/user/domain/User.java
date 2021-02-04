@@ -60,7 +60,7 @@ public class User extends TimeEntity implements UserDetails {
 
 	@Override
 	public boolean isAccountNonLocked() {
-		return true;
+		return this.passwordDetail.getFailedCount() < 5;
 	}
 
 	@Override

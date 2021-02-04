@@ -51,6 +51,19 @@ include::{snippets}/user-findUserByUid/response-fields.adoc[]
 ===== Response HTTP Example
 include::{snippets}/user-findUserByUid/http-response.adoc[]
 
+=== UserName(유저 이름)으로 유저 검색
+
+==== Request
+
+===== Request HTTP Example
+include::{snippets}/user-findByUserName/http-request.adoc[]
+
+==== Response
+include::{snippets}/user-findByUserName/response-fields.adoc[]
+
+===== Response HTTP Example
+include::{snippets}/user-findByUserName/http-response.adoc[]
+
 === 새로운 유저 추가(가입)
 
 ==== Request
@@ -88,3 +101,15 @@ include::{snippets}/user-deleteUserByUid/http-request.adoc[]
 
 ===== Response HTTP Example
 include::{snippets}/user-deleteUserByUid/http-response.adoc[]
+
+=== 로그인
+
+==== Request
+
+===== Request HTTP Example
+include::{snippets}/user-signIn/http-request.adoc[]
+
+==== Response
+
+===== Response HTTP Example
+include::{snippets}/user-signIn/http-response.adoc[]

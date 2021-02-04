@@ -13,13 +13,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -35,10 +37,10 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iso.logus.ApiDocumentUtils;
-import com.iso.logus.domain.user.controller.UserController;
 import com.iso.logus.domain.user.domain.Password;
 import com.iso.logus.domain.user.domain.User;
 import com.iso.logus.domain.user.dto.UserDto;
+import com.iso.logus.domain.user.dto.UserDto.Response;
 import com.iso.logus.domain.user.service.UserService;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
@@ -70,14 +72,14 @@ public class UserControllerTest {
 		user = User.builder()
 					.uid("testUser")
 					.name("test-user")
-					.password(Password.builder().value("test1234").build())
+					.password(Password.builder().value("password").build())
 					.build();
 	}
 	
 	@Test
 	public void findUserByUidTest() throws Exception {
 		//given
-		given(userService.findByUid("testUser")).willReturn(user);
+		given(userService.findByUid("testUser")).willReturn(new UserDto.Response(user));
 		
 		//when
 		ResultActions result = mockMvc.perform(get("/api/user/testUser")
@@ -85,7 +87,7 @@ public class UserControllerTest {
 		
 		//then
 		result.andExpect(status().isOk())
-				.andDo(document("user-findUserByUid",
+				.andDo(document("user-findByUid",
 						ApiDocumentUtils.getDocumentRequest(),
 						ApiDocumentUtils.getDocumentResponse(),
 						responseFields(
@@ -103,7 +105,7 @@ public class UserControllerTest {
 		UserDto.SignUpRequest dto = UserDto.SignUpRequest.builder()
 															.uid("testUser")
 															.name("test-user")
-															.password("test1234")
+															.password("password")
 															.build();
 		
 		//when	
@@ -164,6 +166,52 @@ public class UserControllerTest {
 				.andDo(document("user-deleteUserByUid",
 						ApiDocumentUtils.getDocumentRequest(),
 						ApiDocumentUtils.getDocumentResponse()
+						));
+	}
+	
+	@Test
+	public void signInTest() throws Exception {
+		//given
+		UserDto.SignInRequest dto = UserDto.SignInRequest.builder()
+															.uid("testUser")
+															.password("password")
+															.build();
+		
+		//when
+		ResultActions result = mockMvc.perform(post("/api/user/login")
+					.content(objectMapper.writeValueAsString(dto))
+					.contentType(MediaType.APPLICATION_JSON));
+				
+		//then
+		result.andExpect(status().isOk())
+				.andDo(document("user-signIn",
+						ApiDocumentUtils.getDocumentRequest(),
+						ApiDocumentUtils.getDocumentResponse()
+						));
+	}
+	
+	@Test
+	public void findUserByUserNameTest() throws Exception {
+		//given
+		List<UserDto.Response> dtoList = new ArrayList<>();
+		dtoList.add(new UserDto.Response(user));
+		given(userService.findByUserName("testUser")).willReturn(dtoList);
+		
+		//when
+		ResultActions result = mockMvc.perform(get("/api/user/find/testUser")
+										.accept(MediaType.APPLICATION_JSON));
+		
+		//then
+		result.andExpect(status().isOk())
+				.andDo(document("user-findByUserName",
+						ApiDocumentUtils.getDocumentRequest(),
+						ApiDocumentUtils.getDocumentResponse(),
+						responseFields(
+							fieldWithPath("[].uid").description("유저 아이디"),
+							fieldWithPath("[].name").description("유저 이름"),
+							fieldWithPath("[].createdDate").description("계정 생성 일자"),
+							fieldWithPath("[].lastModifiedDate").description("계정 정보 수정 일자")
+							)
 						));
 	}
 }

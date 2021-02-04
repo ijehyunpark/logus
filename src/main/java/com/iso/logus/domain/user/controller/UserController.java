@@ -1,5 +1,7 @@
 package com.iso.logus.domain.user.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +32,7 @@ public class UserController {
 		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
 	})
 	public UserDto.Response findUserByUid(@PathVariable String uid) {
-		return new UserDto.Response(userService.findByUid(uid));
+		return userService.findByUid(uid);
 	}
 	
 	@PostMapping(value = "/join")
@@ -58,5 +60,13 @@ public class UserController {
 	@PostMapping(value = "/login")
 	public String signIn(@RequestBody UserDto.SignInRequest signInRequest) {
 		return userService.signIn(signInRequest);
+	}
+	
+	@GetMapping(value ="/find/{name}")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
+	})
+	public List<UserDto.Response> findUserByUserName(@PathVariable String name) {
+		return userService.findByUserName(name);
 	}
 }
