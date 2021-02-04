@@ -18,7 +18,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -41,7 +43,9 @@ import com.iso.logus.domain.user.service.UserService;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @AutoConfigureRestDocs
-@WebMvcTest(UserController.class)
+@AutoConfigureMockMvc
+//@WebMvcTest(UserController.class)
+@SpringBootTest
 @ActiveProfiles("test")
 public class UserControllerTest {
 	
@@ -103,7 +107,7 @@ public class UserControllerTest {
 															.build();
 		
 		//when	
-		ResultActions result = mockMvc.perform(post("/api/user")
+		ResultActions result = mockMvc.perform(post("/api/user/join")
 					.content(objectMapper.writeValueAsString(dto))
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON)
