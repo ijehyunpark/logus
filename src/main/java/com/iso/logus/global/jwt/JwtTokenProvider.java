@@ -2,7 +2,6 @@ package com.iso.logus.global.jwt;
 
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -67,5 +66,10 @@ public class JwtTokenProvider {
 		} catch(Exception e) {
 			return false;
 		}
+	}
+	
+	public boolean validateUser(String uid, HttpServletRequest req) {
+		String reqUser = getUserPk(resolveToken(req));
+		return uid.equals(reqUser);
 	}
 }

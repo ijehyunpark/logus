@@ -34,14 +34,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iso.logus.ApiDocumentUtils;
 import com.iso.logus.domain.user.domain.Password;
 import com.iso.logus.domain.user.domain.User;
 import com.iso.logus.domain.user.dto.UserDto;
-import com.iso.logus.domain.user.dto.UserDto.Response;
 import com.iso.logus.domain.user.service.UserService;
+import com.iso.logus.global.jwt.JwtTokenProvider;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @AutoConfigureRestDocs
@@ -57,6 +58,9 @@ public class UserControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	
+	@Autowired
+	private JwtTokenProvider jwtTokenProvider;
+	
 	@MockBean
 	private UserService userService;
 	
@@ -66,6 +70,7 @@ public class UserControllerTest {
 	public void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentationContextProvider) {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
 						.apply(documentationConfiguration(restDocumentationContextProvider))
+						.addFilters(new CharacterEncodingFilter("UTF-8", true))
 						.alwaysDo(print())
 						.build();
 		
@@ -134,12 +139,14 @@ public class UserControllerTest {
 		UserDto.ChangeNameRequest dto = UserDto.ChangeNameRequest.builder()
 																	.name("changedName")
 																	.build();
+		String token = jwtTokenProvider.createToken("testUser");
 		
 		//when
 		ResultActions result = mockMvc.perform(patch("/api/user/testUser")
 					.content(objectMapper.writeValueAsString(dto))
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON)
+					.header("X-AUTH-TOKEN", token)
 				);
 		
 		//then
@@ -157,9 +164,11 @@ public class UserControllerTest {
 	@Test
 	public void deleteuserByUidTest() throws Exception {
 		//given
-		
+		String token = jwtTokenProvider.createToken("testUser");
+				
 		//when
-		ResultActions result = mockMvc.perform(delete("/api/user/testUser"));
+		ResultActions result = mockMvc.perform(delete("/api/user/testUser")
+												.header("X-AUTH-TOKEN", token));
 				
 		//then
 		result.andExpect(status().isOk())

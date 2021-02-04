@@ -4,6 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
+	/* Global Exception : -0xx */
+	ACCESS_DENIED("-1", "권한이 없습니다"),
 	
 	/* User Exception : -1xx */
 	USER_NOT_FOUND("-100", "해당 유저를 찾을 수 없습니다."),
