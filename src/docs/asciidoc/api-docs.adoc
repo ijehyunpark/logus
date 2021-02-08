@@ -93,6 +93,7 @@ include::{snippets}/user-changeUserName/http-request.adoc[]
 
 ===== Response HTTP Example
 include::{snippets}/user-changeUserName/http-response.adoc[]
+include::{snippets}/user-changeUserName-accessDenied/http-response.adoc[]
 
 === 유저 삭제
 Delete /api/user/{uid}
@@ -106,6 +107,7 @@ include::{snippets}/user-deleteUserByUid/http-request.adoc[]
 
 ===== Response HTTP Example
 include::{snippets}/user-deleteUserByUid/http-response.adoc[]
+include::{snippets}/user-deleteUserByUid-accessDenied/http-response.adoc[]
 
 === 로그인
 Post /api/user/login

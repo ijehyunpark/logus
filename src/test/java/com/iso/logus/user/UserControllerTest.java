@@ -1,5 +1,6 @@
 package com.iso.logus.user;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,7 @@ import com.iso.logus.domain.user.domain.Password;
 import com.iso.logus.domain.user.domain.User;
 import com.iso.logus.domain.user.dto.UserDto;
 import com.iso.logus.domain.user.service.UserService;
+import com.iso.logus.global.exception.AccessDeniedException;
 import com.iso.logus.global.jwt.JwtTokenProvider;
 
 @ExtendWith(RestDocumentationExtension.class)
@@ -161,6 +164,30 @@ public class UserControllerTest {
 	}
 	
 	@Test
+	@DisplayName("유저 이름 변경 시도_본인이 아닌 경우")
+	public void changeUserNameTest_accessDenied() throws Exception {
+		//given
+		UserDto.ChangeNameRequest dto = UserDto.ChangeNameRequest.builder()
+																	.name("changedName")
+																	.build();
+		String token = jwtTokenProvider.createToken("idk");
+		//when
+		ResultActions result = mockMvc.perform(patch("/api/user/testUser")
+				.content(objectMapper.writeValueAsString(dto))
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("X-AUTH-TOKEN", token)
+				);
+		
+		//then
+		result.andExpect(status().isUnauthorized())
+			.andDo(document("user-changeUserName-accessDenied",
+			ApiDocumentUtils.getDocumentRequest(),
+			ApiDocumentUtils.getDocumentResponse()
+			)); 
+		
+	}
+	
+	@Test
 	public void deleteuserByUidTest() throws Exception {
 		//given
 		String token = jwtTokenProvider.createToken("testUser");
@@ -172,6 +199,24 @@ public class UserControllerTest {
 		//then
 		result.andExpect(status().isOk())
 				.andDo(document("user-deleteUserByUid",
+						ApiDocumentUtils.getDocumentRequest(),
+						ApiDocumentUtils.getDocumentResponse()
+						));
+	}
+	
+	@Test
+	@DisplayName("유저 삭제 시도_본인이 아닌 경우")
+	public void deleteuserByUidTest_accessDenied() throws Exception {
+		//given
+		String token = jwtTokenProvider.createToken("idk");
+				
+		//when
+		ResultActions result = mockMvc.perform(delete("/api/user/testUser")
+												.header("X-AUTH-TOKEN", token));
+				
+		//then
+		result.andExpect(status().isUnauthorized())
+				.andDo(document("user-deleteUserByUid-accessDenied",
 						ApiDocumentUtils.getDocumentRequest(),
 						ApiDocumentUtils.getDocumentResponse()
 						));
