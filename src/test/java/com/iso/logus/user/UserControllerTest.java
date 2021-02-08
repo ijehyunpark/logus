@@ -1,9 +1,7 @@
 package com.iso.logus.user;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -11,7 +9,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
@@ -20,49 +17,22 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iso.logus.ApiDocumentUtils;
+import com.iso.logus.ControllerTest;
 import com.iso.logus.domain.user.domain.Password;
 import com.iso.logus.domain.user.domain.User;
 import com.iso.logus.domain.user.dto.UserDto;
 import com.iso.logus.domain.user.service.UserService;
-import com.iso.logus.global.exception.AccessDeniedException;
-import com.iso.logus.global.jwt.JwtTokenProvider;
 
-@ExtendWith(RestDocumentationExtension.class)
-@AutoConfigureRestDocs
-@AutoConfigureMockMvc
-//@WebMvcTest(UserController.class)
-@SpringBootTest
-@ActiveProfiles("test")
-public class UserControllerTest {
-	
-	@Autowired
-	private ObjectMapper objectMapper = new ObjectMapper();
-	
-	@Autowired
-	private MockMvc mockMvc;
-	
-	@Autowired
-	private JwtTokenProvider jwtTokenProvider;
-	
+public class UserControllerTest extends ControllerTest {
+
 	@MockBean
 	private UserService userService;
 	
@@ -70,11 +40,7 @@ public class UserControllerTest {
 	
 	@BeforeEach
 	public void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentationContextProvider) {
-		this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-						.apply(documentationConfiguration(restDocumentationContextProvider))
-						.addFilters(new CharacterEncodingFilter("UTF-8", true))
-						.alwaysDo(print())
-						.build();
+		setUpMockMvc(webApplicationContext, restDocumentationContextProvider);
 		
 		user = User.builder()
 					.uid("testUser")
