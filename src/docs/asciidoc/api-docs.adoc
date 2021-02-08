@@ -39,19 +39,21 @@
 == 사용자(User)
 
 === uid(유저 아이디)로 유저 검색
+Get /api/user/{uid}
 
 ==== Request
 
 ===== Request HTTP Example
-include::{snippets}/user-findUserByUid/http-request.adoc[]
+include::{snippets}/user-findByUid/http-request.adoc[]
 
 ==== Response
-include::{snippets}/user-findUserByUid/response-fields.adoc[]
+include::{snippets}/user-findByUid/response-fields.adoc[]
 
 ===== Response HTTP Example
-include::{snippets}/user-findUserByUid/http-response.adoc[]
+include::{snippets}/user-findByUid/http-response.adoc[]
 
 === UserName(유저 이름)으로 유저 검색
+Get /api/user/find/{name}
 
 ==== Request
 
@@ -65,6 +67,7 @@ include::{snippets}/user-findByUserName/response-fields.adoc[]
 include::{snippets}/user-findByUserName/http-response.adoc[]
 
 === 새로운 유저 추가(가입)
+Post /api/user/join
 
 ==== Request
 include::{snippets}/user-signUp/request-fields.adoc[]
@@ -78,6 +81,7 @@ include::{snippets}/user-signUp/http-request.adoc[]
 include::{snippets}/user-signUp/http-response.adoc[]
 
 === 유저 이름 변경
+Patch /api/user/{uid}
 
 ==== Request
 include::{snippets}/user-changeUserName/request-fields.adoc[]
@@ -91,6 +95,7 @@ include::{snippets}/user-changeUserName/http-request.adoc[]
 include::{snippets}/user-changeUserName/http-response.adoc[]
 
 === 유저 삭제
+Delete /api/user/{uid}
 
 ==== Request
 
@@ -103,6 +108,7 @@ include::{snippets}/user-deleteUserByUid/http-request.adoc[]
 include::{snippets}/user-deleteUserByUid/http-response.adoc[]
 
 === 로그인
+Post /api/user/login
 
 ==== Request
 
@@ -113,3 +119,75 @@ include::{snippets}/user-signIn/http-request.adoc[]
 
 ===== Response HTTP Example
 include::{snippets}/user-signIn/http-response.adoc[]
+
+== 팀(Team)
+
+=== 모든 팀 검색
+Get /api/team
+
+==== Request
+
+==== Request HTTP Example
+include::{snippets}/team-findTeamList/http-request.adoc[]
+
+==== Response
+include::{snippets}/team-findTeamList/response-fields.adoc[]
+
+===== Response HTTP Example
+include::{snippets}/team-findTeamList/http-response.adoc[]
+
+=== 특정 이름을 가진 모든 팀 검색
+Get /api/team/{name}
+
+==== Request
+
+==== Request HTTP Example
+include::{snippets}/team-findTeamByName/http-request.adoc[]
+
+==== Response
+include::{snippets}/team-findTeamByName/response-fields.adoc[]
+
+===== Response HTTP Example
+include::{snippets}/team-findTeamByName/http-response.adoc[]
+
+=== 팀 생성
+Post /api/team
+
+==== Request
+include::{snippets}/team-createTeam/request-fields.adoc[]
+
+==== Request HTTP Example
+include::{snippets}/team-createTeam/http-request.adoc[]
+
+==== Response
+
+===== Response HTTP Example
+include::{snippets}/team-createTeam/http-response.adoc[]
+
+=== 팀 설명 변경
+Patch /api/team/descript/{id}
+
+==== Request
+include::{snippets}/team-changeTeamDescript/request-fields.adoc[]
+
+==== Request HTTP Example
+include::{snippets}/team-changeTeamDescript/http-request.adoc[]
+
+==== Response
+
+===== Response HTTP Example
+include::{snippets}/team-changeTeamDescript/http-response.adoc[]
+
+=== 팀 삭제
+Delete /api/team/{id}
+
+==== Request
+
+==== Request HTTP Example
+include::{snippets}/team-deleteTeam/http-request.adoc[]
+
+==== Response
+
+===== Response HTTP Example
+include::{snippets}/team-deleteTeam/http-response.adoc[]
+

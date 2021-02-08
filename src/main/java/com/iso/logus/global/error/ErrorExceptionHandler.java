@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.iso.logus.domain.team.exception.TeamNotFoundException;
 import com.iso.logus.domain.user.exception.PasswordFailedExceededException;
 import com.iso.logus.domain.user.exception.UidDuplicationException;
 import com.iso.logus.domain.user.exception.UserNotFoundException;
@@ -21,41 +22,46 @@ public class ErrorExceptionHandler {
 	@ExceptionHandler(value = {AccessDeniedException.class})
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	protected ErrorResponse handleAccessDeniedException(AccessDeniedException e) {
-		final ErrorCode accessDeniedException = ErrorCode.ACCESS_DENIED;
-		log.error(accessDeniedException.getMessage(), e.getMessage());
-		return buildError(accessDeniedException);
+		return build(ErrorCode.ACCESS_DENIED, e);
 	}
 	
 	@ExceptionHandler(value = {UserNotFoundException.class})
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	protected ErrorResponse handleUserNotFoundException(UserNotFoundException e) {
-		final ErrorCode userNotFound = ErrorCode.USER_NOT_FOUND;
-		log.error(userNotFound.getMessage(), e.getMessage());
-		return buildError(userNotFound);
+		return build(ErrorCode.USER_NOT_FOUND, e);
 	}
 	
 	@ExceptionHandler(value = {UidDuplicationException.class})
 	@ResponseStatus(HttpStatus.CONFLICT)
 	protected ErrorResponse handleUidDuplicationException(UidDuplicationException e) {
-		final ErrorCode uidDuplication = ErrorCode.UID_DUPLICATION;
-		log.error(uidDuplication.getMessage(), e.getMessage());
-		return buildError(uidDuplication);
+		return build(ErrorCode.UID_DUPLICATION, e);
 	}
 	
 	@ExceptionHandler(value = {WrongPasswordException.class})
-	@ResponseStatus(HttpStatus.I_AM_A_TEAPOT)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	protected ErrorResponse handleWrongPasswordException(WrongPasswordException e) {
-		final ErrorCode wrongPassword = ErrorCode.WRONG_PASSWORD;
-		log.error(wrongPassword.getMessage(), e.getMessage());
-		return buildError(wrongPassword	);
+		return build(ErrorCode.WRONG_PASSWORD, e);
 	}
 	
 	@ExceptionHandler(value = {PasswordFailedExceededException.class})
 	@ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
 	protected ErrorResponse handlePasswordFailedExceededException(PasswordFailedExceededException e) {
-		final ErrorCode passwordFailedExceeded = ErrorCode.PASSWORD_FAILED_EXCEEDED;
-		log.error(passwordFailedExceeded.getMessage(), e.getMessage());
-		return buildError(passwordFailedExceeded);
+		return build(ErrorCode.PASSWORD_FAILED_EXCEEDED, e);
+	}
+	
+	@ExceptionHandler(value = {TeamNotFoundException.class})
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	protected ErrorResponse handleTeamNotFoundException(PasswordFailedExceededException e) {
+		return build(ErrorCode.TEAM_NOT_FOUND, e);
+	}
+	
+	private ErrorResponse build(ErrorCode errorCode, RuntimeException e) {
+		buildLog(errorCode, e);
+		return buildError(errorCode);
+	}
+	
+	private void buildLog(ErrorCode errorCode, RuntimeException e) {
+		log.error(errorCode.getMessage(), e.getMessage());
 	}
 	
 	private ErrorResponse buildError(ErrorCode errorCode) {

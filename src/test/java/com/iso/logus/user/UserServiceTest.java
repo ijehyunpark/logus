@@ -173,6 +173,23 @@ public class UserServiceTest {
 	}
 	
 	@Test
+	@DisplayName("signUp: 새로운 계정 생성 테스트")
+	public void singUpTest() {
+		//given
+		UserDto.SignUpRequest signUpRequest = UserDto.SignUpRequest.builder()
+				.uid("newAccount")
+				.password("password")
+				.name("testAccount")
+				.build();
+		
+		//when
+		userService.SignUp(signUpRequest);
+		
+		//then
+		
+	}
+	
+	@Test
 	@DisplayName("signIn: 로그인 테스트_성공")
 	public void signInTest_success() {
 		//given

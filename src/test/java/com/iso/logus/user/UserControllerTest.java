@@ -29,7 +29,6 @@ import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -44,7 +43,7 @@ import com.iso.logus.domain.user.dto.UserDto;
 import com.iso.logus.domain.user.service.UserService;
 import com.iso.logus.global.jwt.JwtTokenProvider;
 
-@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
+@ExtendWith(RestDocumentationExtension.class)
 @AutoConfigureRestDocs
 @AutoConfigureMockMvc
 //@WebMvcTest(UserController.class)
