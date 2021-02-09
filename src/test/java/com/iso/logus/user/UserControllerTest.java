@@ -36,17 +36,15 @@ public class UserControllerTest extends ControllerTest {
 	@MockBean
 	private UserService userService;
 	
+	private int USER_NUM = 0;
+	
 	private User user;
 	
 	@BeforeEach
 	public void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentationContextProvider) {
 		setUpMockMvc(webApplicationContext, restDocumentationContextProvider);
 		
-		user = User.builder()
-					.uid("testUser")
-					.name("test-user")
-					.password(Password.builder().value("password").build())
-					.build();
+		user = signUpRequestBuilder().toEntity();
 	}
 	
 	@Test
@@ -75,11 +73,7 @@ public class UserControllerTest extends ControllerTest {
 	@Test
 	public void SignUpTest() throws Exception {
 		//given
-		UserDto.SignUpRequest dto = UserDto.SignUpRequest.builder()
-															.uid("testUser")
-															.name("test-user")
-															.password("password")
-															.build();
+		UserDto.SignUpRequest dto = signUpRequestBuilder();
 		
 		//when	
 		ResultActions result = mockMvc.perform(post("/api/user/join")
@@ -232,5 +226,14 @@ public class UserControllerTest extends ControllerTest {
 							fieldWithPath("[].lastModifiedDate").description("계정 정보 수정 일자")
 							)
 						));
+	}
+	
+	private UserDto.SignUpRequest signUpRequestBuilder() {
+		USER_NUM++;
+		return UserDto.SignUpRequest.builder()
+				.uid("testUser" + String.valueOf(USER_NUM))
+				.name("test-user" + String.valueOf(USER_NUM))
+				.password("password")
+				.build();
 	}
 }

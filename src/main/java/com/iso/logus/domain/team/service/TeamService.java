@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.iso.logus.domain.team.domain.Team;
-import com.iso.logus.domain.team.domain.TeamRepository;
+import com.iso.logus.domain.team.domain.team.Team;
+import com.iso.logus.domain.team.domain.team.TeamRepository;
 import com.iso.logus.domain.team.dto.TeamDto;
 import com.iso.logus.domain.team.exception.TeamNotFoundException;
 

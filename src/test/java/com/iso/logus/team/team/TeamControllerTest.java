@@ -1,4 +1,4 @@
-package com.iso.logus.team;
+package com.iso.logus.team.team;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -17,17 +17,18 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.iso.logus.ApiDocumentUtils;
 import com.iso.logus.ControllerTest;
-import com.iso.logus.domain.team.domain.Team;
+import com.iso.logus.domain.team.domain.team.Team;
+import com.iso.logus.domain.team.domain.team.TeamRepository;
 import com.iso.logus.domain.team.dto.TeamDto;
 import com.iso.logus.domain.team.service.TeamService;
 
@@ -36,20 +37,21 @@ public class TeamControllerTest extends ControllerTest {
 	@MockBean
 	private TeamService teamService;
 	
+	@Autowired
+	private TeamRepository teamRepository;
+	
+	int TEAM_NUM = 0;
+	
 	private Team team1, team2;
 	
 	@BeforeEach
 	public void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentationContextProvider) {
 		setUpMockMvc(webApplicationContext, restDocumentationContextProvider);
 		
-		team1 = Team.builder()
-					.name("testTeam1")
-					.descript("sample1")
-					.build();
-		team2 = Team.builder()
-					.name("testTeam2")
-					.descript("sample2")
-					.build();
+		team1 = createRequestBuilder().toEntity();
+		team2 = createRequestBuilder().toEntity();
+		teamRepository.save(team1);
+		teamRepository.save(team2);
 	}
 	
 	@Test
@@ -70,13 +72,13 @@ public class TeamControllerTest extends ControllerTest {
 						ApiDocumentUtils.getDocumentRequest(),
 						ApiDocumentUtils.getDocumentResponse(),
 						responseFields(
+								fieldWithPath("[].id").description("팀 식별자"),
 								fieldWithPath("[].name").description("팀 이름"),
 								fieldWithPath("[].descript").description("팀 설명"),
 								fieldWithPath("[].createdDate").description("팀 생성 일자"),
 								fieldWithPath("[].lastModifiedDate").description("팀 정보 수정 일자")
 							)
 						));
-		
 	}
 	
 	@Test
@@ -98,22 +100,19 @@ public class TeamControllerTest extends ControllerTest {
 						ApiDocumentUtils.getDocumentRequest(),
 						ApiDocumentUtils.getDocumentResponse(),
 						responseFields(
+								fieldWithPath("[].id").description("팀 식별자"),
 								fieldWithPath("[].name").description("팀 이름"),
 								fieldWithPath("[].descript").description("팀 설명"),
 								fieldWithPath("[].createdDate").description("팀 생성 일자"),
 								fieldWithPath("[].lastModifiedDate").description("팀 정보 수정 일자")
 							)
 						));
-		
 	}
 	
 	@Test
 	public void createTeamTest() throws Exception {
 		//given
-		TeamDto.CreateRequest createRequest = TeamDto.CreateRequest.builder()
-																	.name("testTeam3")
-																	.descript("sample3")
-																	.build();
+		TeamDto.CreateRequest createRequest = createRequestBuilder();
 		
 		//when
 		ResultActions result = mockMvc.perform(post("/api/team")
@@ -130,7 +129,6 @@ public class TeamControllerTest extends ControllerTest {
 							fieldWithPath("descript").type(JsonFieldType.STRING).description("팀 설명")
 							)
 						));
-		
 	}
 	
 	@Test
@@ -154,7 +152,6 @@ public class TeamControllerTest extends ControllerTest {
 							fieldWithPath("descript").type(JsonFieldType.STRING).description("팀 설명")
 							)
 						));
-		
 	};
 	
 	@Test
@@ -169,7 +166,14 @@ public class TeamControllerTest extends ControllerTest {
 				.andDo(document("team-deleteTeam",
 						ApiDocumentUtils.getDocumentRequest(),
 						ApiDocumentUtils.getDocumentResponse()
-						));
-		
+						));	
+	}
+	
+	private TeamDto.CreateRequest createRequestBuilder() {
+		TEAM_NUM++;
+		return TeamDto.CreateRequest.builder()
+				.name("testTeam" + String.valueOf(TEAM_NUM))
+				.descript("sample" + String.valueOf(TEAM_NUM))
+				.build();
 	}
 }

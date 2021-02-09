@@ -1,4 +1,4 @@
-package com.iso.logus.domain.team.domain;
+package com.iso.logus.domain.team.domain.team;
 
 import java.util.List;
 

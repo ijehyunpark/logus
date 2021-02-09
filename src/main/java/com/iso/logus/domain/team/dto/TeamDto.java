@@ -2,7 +2,7 @@ package com.iso.logus.domain.team.dto;
 
 import java.time.LocalDateTime;
 
-import com.iso.logus.domain.team.domain.Team;
+import com.iso.logus.domain.team.domain.team.Team;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -13,12 +13,14 @@ public class TeamDto {
 
 	@Getter
 	public static class Response {
+		private long id;
 		private String name;
 		private String descript;
 		private LocalDateTime createdDate;
 		private LocalDateTime lastModifiedDate;
 		
 		public Response(Team team) {
+			this.id = team.getId();
 			this.name = team.getName();
 			this.descript = team.getDescript();
 			this.createdDate = team.getCreatedDate();

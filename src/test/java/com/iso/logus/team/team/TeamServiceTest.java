@@ -1,4 +1,4 @@
-package com.iso.logus.team;
+package com.iso.logus.team.team;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -23,8 +23,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.iso.logus.domain.team.domain.Team;
-import com.iso.logus.domain.team.domain.TeamRepository;
+import com.iso.logus.domain.team.domain.team.Team;
+import com.iso.logus.domain.team.domain.team.TeamRepository;
 import com.iso.logus.domain.team.dto.TeamDto;
 import com.iso.logus.domain.team.exception.TeamNotFoundException;
 import com.iso.logus.domain.team.service.TeamService;
@@ -43,14 +43,18 @@ public class TeamServiceTest {
 	
 	@BeforeEach
 	public void setUp() {
-		team1 = Team.builder()
+		team1 = TeamDto.CreateRequest.builder()
 					.name("testTeam1")
 					.descript("sample1")
-					.build();
-		team2 = Team.builder()
+					.build()
+					.toEntity();
+		team1.setIdForTest(1L);
+		team2 = TeamDto.CreateRequest.builder()
 					.name("testTeam2")
 					.descript("sample2")
-					.build();
+					.build()
+					.toEntity();
+		team2.setIdForTest(2L);
 	}
 	
 	@Test
@@ -159,7 +163,7 @@ public class TeamServiceTest {
 		
 		//when
 		assertThrows(TeamNotFoundException.class, () ->{
-			final Team team = teamService.findTeamById(anyLong());
+			teamService.findTeamById(anyLong());
 		});
 		
 		//then
@@ -222,10 +226,12 @@ public class TeamServiceTest {
 		List<Team> teamList = new ArrayList<>();
 		teamList.add(team1);
 		
-		Team team3 = Team.builder()
+		Team team3 = TeamDto.CreateRequest.builder()
 				.name("testTeam1")
 				.descript("sample3")
-				.build();
+				.build()
+				.toEntity();
+		team3.setIdForTest(3L);
 		teamList.add(team3);
 		return teamList;
 	}
