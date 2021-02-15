@@ -27,7 +27,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			"/swagger-ui.html",
 			"/v2/api-docs",
 			"/webjars/**",
-			"/docs/api-docs.html"
+			"/docs/api-docs.html",
+			"/h2-console/**"
 	};
 	
 	@Bean
@@ -41,7 +42,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		httpSecurity			
 			.httpBasic().disable()
 			.csrf().disable()
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			//.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.headers().frameOptions().disable()
 			.and()
 				.authorizeRequests()
 					.antMatchers("/api/user/join", "/api/user/login").permitAll()

@@ -27,7 +27,12 @@ public class UserService {
 	
 	@Transactional(readOnly = true)
 	public User findUserByUid(String uid) {
-		return userRepository.findByUid(uid).orElseThrow(() -> new UserNotFoundException(uid));
+		return userRepository.findByUid(uid).orElseThrow(UserNotFoundException::new);
+	}
+	
+	@Transactional(readOnly = true)
+	public User findUserByUidForSignIn(String uid) {
+		return userRepository.findByUid(uid).orElseThrow(WrongPasswordException::new);
 	}
 	
 	@Transactional(readOnly = true)
@@ -42,22 +47,22 @@ public class UserService {
 	
 	public void SignUp(UserDto.SignUpRequest signUpRequest) {
 		if(isExistedUid(signUpRequest.getUid()))
-			throw new UidDuplicationException(signUpRequest.getUid());
+			throw new UidDuplicationException();
 		userRepository.save(signUpRequest.toEntity());
 	}
 	
 	public void changeUserName(String uid, UserDto.ChangeNameRequest changeNameRequest) {
-		User user = userRepository.findByUid(uid).orElseThrow(() -> new UserNotFoundException(uid));
+		User user = userRepository.findByUid(uid).orElseThrow(UserNotFoundException::new);
 		user.changeName(changeNameRequest);
 	}
 	
 	public void deleteUserByUid(String uid) {
-		User user = userRepository.findByUid(uid).orElseThrow(() -> new UserNotFoundException(uid));
+		User user = userRepository.findByUid(uid).orElseThrow(UserNotFoundException::new);
 		userRepository.delete(user);
 	}
 	
 	public String signIn(UserDto.SignInRequest signInRequest) {
-		User user = findUserByUid(signInRequest.getUid());
+		User user = findUserByUidForSignIn(signInRequest.getUid());
 		if(!user.getPasswordDetail().isMatched(signInRequest.getPassword()))
 			throw new WrongPasswordException();
 		return JwtTokenProvider.createToken(user.getUid());
@@ -69,7 +74,7 @@ public class UserService {
 		List<User> userList = userRepository.findByName(name);
 		
 		if(userList.isEmpty())
-			throw new UserNotFoundException(null);
+			throw new UserNotFoundException();
 		
 		List<UserDto.Response> dtoList = new ArrayList<>();
 		for(User user : userList) 

@@ -37,7 +37,7 @@ public class UserDto {
 		private String uid;
 		@NotEmpty
 		private String name;
-		
+		@NotEmpty
 		private String password;
 		
 		@Builder
@@ -58,6 +58,7 @@ public class UserDto {
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
 	public static class ChangeNameRequest {
+		@NotEmpty
 		private String name;
 		
 		@Builder
@@ -70,7 +71,9 @@ public class UserDto {
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
 	public static class SignInRequest {
+		@NotEmpty
 		private String uid;
+		@NotEmpty
 		private String password;
 		
 		@Builder

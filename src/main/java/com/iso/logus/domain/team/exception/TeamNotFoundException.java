@@ -1,8 +1,15 @@
 package com.iso.logus.domain.team.exception;
 
-@SuppressWarnings("serial")
-public class TeamNotFoundException extends RuntimeException {
+import com.iso.logus.global.error.ErrorCode;
+import com.iso.logus.global.exception.CustomException;
 
-	public TeamNotFoundException() {
-	}
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@SuppressWarnings("serial")
+@Getter
+@NoArgsConstructor
+public class TeamNotFoundException extends CustomException {
+
+	private ErrorCode errorCode = ErrorCode.TEAM_NOT_FOUND;
 }

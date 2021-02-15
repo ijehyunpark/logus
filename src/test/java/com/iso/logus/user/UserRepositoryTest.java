@@ -11,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import com.iso.logus.domain.user.domain.Password;
 import com.iso.logus.domain.user.domain.User;
 import com.iso.logus.domain.user.domain.UserRepository;
+import com.iso.logus.domain.user.dto.UserDto;
 import com.iso.logus.domain.user.exception.UserNotFoundException;
 
 @DataJpaTest
@@ -23,17 +24,18 @@ public class UserRepositoryTest {
 	
 	@BeforeEach
 	public void setUp() {
-		User user = User.builder()
+		User user = UserDto.SignUpRequest.builder()
 			.uid(uid)
-			.password(Password.builder().value("hellotest").build())
+			.password("hellotest")
 			.name("testuser")
-			.build();
+			.build()
+			.toEntity();
 		userRepository.save(user);
 	}
 	
 	@Test
 	public void findByUid() {
-		final User user = userRepository.findByUid(uid).orElseThrow(() -> new UserNotFoundException(uid));
+		final User user = userRepository.findByUid(uid).orElseThrow(UserNotFoundException::new);
 		assertThat(user.getUid()).isEqualTo(uid);
 	}
 }

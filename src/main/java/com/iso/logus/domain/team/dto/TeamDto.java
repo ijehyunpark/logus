@@ -2,6 +2,8 @@ package com.iso.logus.domain.team.dto;
 
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.NotEmpty;
+
 import com.iso.logus.domain.team.domain.team.Team;
 
 import lombok.AccessLevel;
@@ -31,6 +33,7 @@ public class TeamDto {
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
 	public static class CreateRequest {
+		@NotEmpty
 		private String name;
 		private String descript;
 		

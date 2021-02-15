@@ -1,4 +1,4 @@
-package com.iso.logus.domain.user.exception;
+package com.iso.logus.domain.team.exception;
 
 import com.iso.logus.global.error.ErrorCode;
 import com.iso.logus.global.exception.CustomException;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @SuppressWarnings("serial")
 @Getter
 @NoArgsConstructor
-public class UidDuplicationException extends CustomException {
+public class TeamAuthNotFoundException extends CustomException {
 	
-	private ErrorCode errorCode = ErrorCode.UID_DUPLICATION;
+	private ErrorCode errorCode = ErrorCode.TEAM_AUTH_NOT_FOUND;
 }

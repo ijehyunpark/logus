@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,10 +39,10 @@ public class TeamServiceTest {
 	@Mock
 	private TeamRepository teamRepository;
 	
-	private Team team1, team2;
+	private static Team team1, team2;
 	
-	@BeforeEach
-	public void setUp() {
+	@BeforeAll
+	public static void setUp() {
 		team1 = TeamDto.CreateRequest.builder()
 					.name("testTeam1")
 					.descript("sample1")
@@ -61,7 +61,7 @@ public class TeamServiceTest {
 	@DisplayName("changeResponseDto: Team Entity -> ResponseDto 변환 테스트")
 	public void changeResponseDtoTest() {
 		//given
-		List<Team> teamList = teamListBuilder();
+		final List<Team> teamList = teamListBuilder();
 		//when
 		final List<TeamDto.Response> dtoList = teamService.changeResponseDto(teamList);
 		
@@ -76,7 +76,7 @@ public class TeamServiceTest {
 	@DisplayName("findTeamList: Team Entity 반환 테스트")
 	public void findTeamListTest() {
 		//given
-		List<Team> teamList = teamListBuilder();
+		final List<Team> teamList = teamListBuilder();
 		given(teamRepository.findAll()).willReturn(teamList);
 		
 		//when
@@ -93,7 +93,7 @@ public class TeamServiceTest {
 	@DisplayName("findList: 모든 team 리스트 반환 테스트")
 	public void findListTest() {
 		//given
-		List<Team> teamList = teamListBuilder();
+		final List<Team> teamList = teamListBuilder();
 		given(teamRepository.findAll()).willReturn(teamList);
 		
 		//when
@@ -110,7 +110,7 @@ public class TeamServiceTest {
 	@DisplayName("findTeamByName: Team Entity 반환 테스트")
 	public void findTeamByNameTest() {
 		//given
-		List<Team> teamList = sameNameTeamListBuilder();
+		final List<Team> teamList = sameNameTeamListBuilder();
 		given(teamRepository.findAllByName("testTeam1")).willReturn(teamList);
 		
 		//when
@@ -127,7 +127,7 @@ public class TeamServiceTest {
 	@DisplayName("findByName: 특정 이름을 가진 모든 team 리스트 반환 테스트")
 	public void findByNameTest() {
 		//given
-		List<Team> teamList = sameNameTeamListBuilder();
+		final List<Team> teamList = sameNameTeamListBuilder();
 		given(teamRepository.findAllByName("testTeam1")).willReturn(teamList);
 		
 		//when

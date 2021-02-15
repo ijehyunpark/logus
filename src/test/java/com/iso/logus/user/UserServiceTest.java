@@ -227,7 +227,7 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	@DisplayName("signIn: 로그인 테스트_실패:없는 계정")
+	@DisplayName("signIn: 로그인 테스트_실패:없는 계정, 특이사항: 잘못된 비밀번호 예외를 발생시켜야 함")
 	public void signInTest_fail2() {
 		//given
 		given(userRepository.findByUid("empty")).willReturn(Optional.empty());
@@ -237,7 +237,7 @@ public class UserServiceTest {
 																	.build();
 		
 		//when
-		assertThrows(UserNotFoundException.class, () -> {
+		assertThrows(WrongPasswordException.class, () -> {
 			String resultToken = userService.signIn(signInRequest);
 		});
 		

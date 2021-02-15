@@ -1,7 +1,14 @@
 package com.iso.logus.global.exception;
 
-public class AccessDeniedException extends RuntimeException {
+import com.iso.logus.global.error.ErrorCode;
 
-	public AccessDeniedException() {
-	}
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@SuppressWarnings("serial")
+@Getter
+@NoArgsConstructor
+public class AccessDeniedException extends CustomException {
+
+	private ErrorCode errorCode = ErrorCode.ACCESS_DENIED;
 }

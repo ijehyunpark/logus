@@ -12,3 +12,6 @@ spring:
     password: 
   jwt:
     secret: dev
+  h2:
+    console:
+      enabled: true

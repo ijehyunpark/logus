@@ -3,6 +3,7 @@ package com.iso.logus.domain.user.controller;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,7 +43,7 @@ public class UserController {
 	
 	@PostMapping(value = "/join")
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public void SignUp(@RequestBody UserDto.SignUpRequest signUpRequest) {
+	public void SignUp(@Valid @RequestBody UserDto.SignUpRequest signUpRequest) {
 		userService.SignUp(signUpRequest);
 	}
 	
@@ -50,7 +51,7 @@ public class UserController {
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
 	})
-	public void changeUserName(@PathVariable String uid, @RequestBody UserDto.ChangeNameRequest changeNameRequest, HttpServletRequest request) {
+	public void changeUserName(@PathVariable String uid, @Valid @RequestBody UserDto.ChangeNameRequest changeNameRequest, HttpServletRequest request) {
 		if(!jwtTokenProvider.validateUser(uid, request))
 			throw new AccessDeniedException();
 		userService.changeUserName(uid, changeNameRequest);
@@ -67,7 +68,7 @@ public class UserController {
 	}
 	
 	@PostMapping(value = "/login")
-	public String signIn(@RequestBody UserDto.SignInRequest signInRequest) {
+	public String signIn(@RequestBody @Valid UserDto.SignInRequest signInRequest) {
 		return userService.signIn(signInRequest);
 	}
 	

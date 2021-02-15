@@ -193,3 +193,60 @@ include::{snippets}/team-deleteTeam/http-request.adoc[]
 ===== Response HTTP Example
 include::{snippets}/team-deleteTeam/http-response.adoc[]
 
+== 팀 권한 설정(Teamauthority)
+
+=== 해당 팀의 모든 권한 조회
+Get /api/team/auth/{team_id}
+
+==== Request
+
+==== Request HTTP Example
+include::{snippets}/teamAuth-findTeamAuthList/http-request.adoc[]
+
+==== Response
+include::{snippets}/teamAuth-findTeamAuthList/response-fields.adoc[]
+
+===== Response HTTP Example
+include::{snippets}/teamAuth-findTeamAuthList/http-response.adoc[]
+
+=== 팀권한 생성
+Post /api/team/auth/{team_id}
+
+==== Request
+include::{snippets}/teamAuth-createTeamAuth/request-fields.adoc[]
+
+==== Request HTTP Example
+include::{snippets}/teamAuth-createTeamAuth/http-request.adoc[]
+
+==== Response
+
+===== Response HTTP Example
+include::{snippets}/teamAuth-createTeamAuth/http-response.adoc[]
+
+=== 특정 팀 권한 변경
+Patch /api/team/auth/{team_id}/{name}
+
+==== Request
+include::{snippets}/teamAuth-changeTeamAuth/request-fields.adoc[]
+
+==== Request HTTP Example
+include::{snippets}/teamAuth-changeTeamAuth/http-request.adoc[]
+
+==== Response
+
+===== Response HTTP Example
+include::{snippets}/teamAuth-changeTeamAuth/http-response.adoc[]
+
+=== 특정 팀 권한 삭제
+Delete /api/team/auth/{team_id}/{name}
+
+==== Request
+
+==== Request HTTP Example
+include::{snippets}/teamAuth-deleteTeamAuth/http-request.adoc[]
+
+==== Response
+
+===== Response HTTP Example
+include::{snippets}/teamAuth-deleteTeamAuth/http-response.adoc[]
+

@@ -7,16 +7,16 @@ import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.iso.logus.domain.team.dto.TeamDto;
-import com.iso.logus.domain.team.service.TeamService;
+import com.iso.logus.domain.team.dto.TeamAuthDto;
+import com.iso.logus.domain.team.service.TeamAuthService;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -24,49 +24,41 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/team")
-public class TeamController {
+@RequestMapping(value = "/api/team/auth")
+public class TeamAuthController {
+	
+	private final TeamAuthService teamAuthService;
 
-	private final TeamService teamService;
-	
-	@GetMapping
+	@GetMapping(value = "/{team_id}")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
 	})
-	public List<TeamDto.Response> findList() {
-		return teamService.findList();
+	public List<TeamAuthDto.Response> findTeamAuthList(@PathVariable("team_id") long teamId) {
+		return teamAuthService.findList(teamId);
 	}
 	
-	@GetMapping(value = "/{name}")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
-	})
-	public List<TeamDto.Response> findByName(@PathVariable String name) {
-		return teamService.findByName(name);
-	}
-	
-	@PostMapping
+	@PostMapping(value = "/{team_id}")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
 	})
 	@ResponseStatus(code = HttpStatus.CREATED)
-	public void createTeam(@Valid @RequestBody TeamDto.CreateRequest createRequest) {
-		teamService.createTeam(createRequest);
+	public void createTeamAuth(@PathVariable("team_id") long teamId, @Valid @RequestBody TeamAuthDto.SaveRequest saveRequest) {
+		teamAuthService.createTeamAuth(teamId, saveRequest);
 	}
 	
-	@PatchMapping(value = "/descript/{id}")
+	@PutMapping(value = "/{team_id}/{name}")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
 	})
-	public void changeTeamDescript(@PathVariable long id, @Valid @RequestBody TeamDto.ChangeDescriptRequest changeDescriptRequest) {
-		teamService.changeTeamDescript(id, changeDescriptRequest);
+	public void changeTeamAuth(@PathVariable("team_id") long teamId, @PathVariable String name, @Valid @RequestBody TeamAuthDto.UpdateRequest updateRequest) {
+		teamAuthService.changeTeamAuth(teamId, name, updateRequest);
 	}
 	
-	@DeleteMapping(value = "/{id}")
+	@DeleteMapping(value = "/{team_id}/{name}")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
 	})
-	public void deleteTeam(@PathVariable long id) {
-		teamService.deleteTeam(id);
+	public void deleteTeamAuth(@PathVariable("team_id") long teamId, @PathVariable String name) {
+		teamAuthService.deleteTeamAuth(teamId,name);
 	}
 }
