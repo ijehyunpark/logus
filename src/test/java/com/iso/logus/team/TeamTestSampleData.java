@@ -1,4 +1,4 @@
-package com.iso.logus.team.teamauth;
+package com.iso.logus.team;
 
 import org.springframework.stereotype.Component;
 
@@ -7,32 +7,33 @@ import com.iso.logus.domain.team.domain.teamauth.ActiveAuth;
 import com.iso.logus.domain.team.domain.teamauth.MasterAuth;
 import com.iso.logus.domain.team.domain.teamauth.MemberControllAuth;
 import com.iso.logus.domain.team.domain.teamauth.TeamAuth;
+import com.iso.logus.domain.team.domain.teamauth.TeamAuthType;
 import com.iso.logus.domain.team.dto.TeamAuthDto;
 import com.iso.logus.domain.team.dto.TeamDto;
 
 @Component
-public class TeamAuthSampleData {
+public class TeamTestSampleData {
 	
-	protected Team makeTeam() {
+	public Team makeTeam() {
 		Team team = TeamDto.CreateRequest.builder()
 				.name("testTeam")
 				.descript("sample")
 				.build().toEntity();
 		return team;
 	}
-	protected Team makeTeam(long mockTeamId) {
+	public Team makeTeam(long mockTeamId) {
 		Team team = makeTeam();
 		team.setIdForTest(mockTeamId);
 		return team;
 	}
 	
-	protected TeamAuth returnAllTrueAuth(Team team) {
+	public TeamAuth returnAllTrueAuth(Team team) {
 		MasterAuth masterTrueAuth = MasterAuth.builder().build();
 		MemberControllAuth memberControllTrueAuth = MemberControllAuth.builder().build();
 		ActiveAuth activeTrueAuth = ActiveAuth.builder().build();
-		masterTrueAuth.setAllTrue();
-		memberControllTrueAuth.setAllTrue();
-		activeTrueAuth.setAllTrue();
+		masterTrueAuth.makeAllTrue();
+		memberControllTrueAuth.makeAllTrue();
+		activeTrueAuth.makeAllTrue();
 		return TeamAuthDto.SaveRequest.builder()
 						.name("first-class")
 						.masterAuth(masterTrueAuth)
@@ -42,13 +43,13 @@ public class TeamAuthSampleData {
 						.toEntity(team);
 	}
 	
-	protected TeamAuth returnAllFalseAuth(Team team) {
+	public TeamAuth returnAllFalseAuth(Team team) {
 		MasterAuth masterFalseAuth = MasterAuth.builder().build();
 		MemberControllAuth memberControllFalseAuth = MemberControllAuth.builder().build();
 		ActiveAuth activeFalseAuth = ActiveAuth.builder().build();
-		masterFalseAuth.setAllFalse();
-		memberControllFalseAuth.setAllFalse();
-		activeFalseAuth.setAllFalse();
+		masterFalseAuth.makeAllFalse();
+		memberControllFalseAuth.makeAllFalse();
+		activeFalseAuth.makeAllFalse();
 		return TeamAuthDto.SaveRequest.builder()
 						.name("last-class")
 						.masterAuth(masterFalseAuth)
@@ -58,7 +59,7 @@ public class TeamAuthSampleData {
 						.toEntity(team);
 	}
 	
-	protected TeamAuth returnSampleAuth(Team team) {
+	public TeamAuth returnSampleAuth(Team team) {
 		MasterAuth masterCustomAuth = MasterAuth.builder()
 				.masterAuth(false)
 				.teamNameAuth(true)
@@ -80,7 +81,7 @@ public class TeamAuthSampleData {
 						.toEntity(team);
 	}
 	
-	protected TeamAuthDto.SaveRequest saveRequestBuilder() {
+	public TeamAuthDto.SaveRequest saveRequestBuilder() {
 		MasterAuth masterAuth = MasterAuth.builder()
 				.masterAuth(false)
 				.teamNameAuth(false)
@@ -102,7 +103,7 @@ public class TeamAuthSampleData {
 		return saveRequst;
 	}
 	
-	protected TeamAuthDto.UpdateRequest updateRequestBuilder() {
+	public TeamAuthDto.UpdateRequest updateRequestBuilder(String name, TeamAuthType type) {
 		MasterAuth masterAuth = MasterAuth.builder()
 				.masterAuth(false)
 				.teamNameAuth(false)
@@ -116,7 +117,31 @@ public class TeamAuthSampleData {
 		ActiveAuth activeAuth = ActiveAuth.builder()
 				.build();
 		TeamAuthDto.UpdateRequest updateRequest = TeamAuthDto.UpdateRequest.builder()
-				.name("updated")
+				.name(name)
+				.type(type)
+				.masterAuth(masterAuth)
+				.memberControllAuth(memberControllAuth)
+				.activeAuth(activeAuth)
+				.build();
+		return updateRequest;
+	}
+		
+	public TeamAuthDto.UpdateRequest updateMasterBuilder(String name, TeamAuthType type) {
+		MasterAuth masterAuth = MasterAuth.builder()
+				.masterAuth(true)
+				.teamNameAuth(true)
+				.authManageAuth(true)
+				.build();
+		MemberControllAuth memberControllAuth = MemberControllAuth.builder()
+				.inviteAuth(true)
+				.inviteAcceptAuth(true)
+				.quitAuth(true)
+				.build();
+		ActiveAuth activeAuth = ActiveAuth.builder()
+				.build();
+		TeamAuthDto.UpdateRequest updateRequest = TeamAuthDto.UpdateRequest.builder()
+				.name(name)
+				.type(type)
 				.masterAuth(masterAuth)
 				.memberControllAuth(memberControllAuth)
 				.activeAuth(activeAuth)

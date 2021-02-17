@@ -30,8 +30,10 @@ import org.springframework.web.context.WebApplicationContext;
 import com.iso.logus.ApiDocumentUtils;
 import com.iso.logus.ControllerTest;
 import com.iso.logus.domain.team.domain.team.Team;
+import com.iso.logus.domain.team.domain.teamauth.TeamAuthType;
 import com.iso.logus.domain.team.dto.TeamAuthDto;
 import com.iso.logus.domain.team.service.TeamAuthService;
+import com.iso.logus.team.TeamTestSampleData;
 
 public class TeamAuthControllerTest extends ControllerTest {
 	
@@ -39,7 +41,7 @@ public class TeamAuthControllerTest extends ControllerTest {
 	private TeamAuthService teamAuthSerive;
 	
 	@Autowired
-	private  TeamAuthSampleData sampleData;
+	private TeamTestSampleData sampleData;
 	
 	private Team team;
 	
@@ -71,6 +73,7 @@ public class TeamAuthControllerTest extends ControllerTest {
 						ApiDocumentUtils.getDocumentResponse(),
 						responseFields(
 								fieldWithPath("[].name").description("권한 이름"),
+								fieldWithPath("[].type").description("팀 권한 분류"),
 								fieldWithPath("[].masterAuth.masterAuth").description("최종 관리자 권한 여부"),
 								fieldWithPath("[].masterAuth.teamNameAuth").description("팀 이름 변경 권한 여부"),
 								fieldWithPath("[].masterAuth.authManageAuth").description("팀 권한 관리 권한 여부"),
@@ -114,7 +117,7 @@ public class TeamAuthControllerTest extends ControllerTest {
 	@Test
 	public void changeTeamAuthTest() throws Exception {
 		//given
-		TeamAuthDto.UpdateRequest updateRequest = sampleData.updateRequestBuilder();
+		TeamAuthDto.UpdateRequest updateRequest = sampleData.updateRequestBuilder("changed auth name", TeamAuthType.NONE);
 		
 		//when
 		ResultActions result = mockMvc.perform(put("/api/team/auth/1/anyString")
@@ -128,6 +131,7 @@ public class TeamAuthControllerTest extends ControllerTest {
 						ApiDocumentUtils.getDocumentResponse(),
 						requestFields(
 							fieldWithPath("name").type(JsonFieldType.STRING).description("권한 이름"),
+							fieldWithPath("type").type(JsonFieldType.STRING).description("팀 권한 분류"),
 							fieldWithPath("masterAuth.masterAuth").type(JsonFieldType.BOOLEAN).description("최종 관리자 권한 여부").optional(),
 							fieldWithPath("masterAuth.teamNameAuth").type(JsonFieldType.BOOLEAN).description("팀 이름 변경 권한 여부").optional(),
 							fieldWithPath("masterAuth.authManageAuth").type(JsonFieldType.BOOLEAN).description("팀 권한 관리 권한 여부").optional(),

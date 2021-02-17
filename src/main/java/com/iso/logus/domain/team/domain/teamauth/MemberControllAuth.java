@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Embeddable
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class MemberControllAuth implements DetailAuth {
 	@Column(name = "invite_auth", columnDefinition = "tinyint(1) not null default false comment '팀 초대 권한'")
 	private boolean inviteAuth;
@@ -29,16 +29,21 @@ public class MemberControllAuth implements DetailAuth {
 	}
 
 	@Override
-	public void setAllTrue() {
+	public void makeAllTrue() {
 		this.inviteAuth = true;
 		this.inviteAcceptAuth = true;
 		this.quitAuth = true;
 	}
 
 	@Override
-	public void setAllFalse() {
+	public void makeAllFalse() {
 		this.inviteAuth = false;
 		this.inviteAcceptAuth = false;
 		this.quitAuth = false;
+	}
+
+	@Override
+	public boolean checkAllTrue() {
+		return inviteAuth && inviteAcceptAuth && quitAuth;
 	}
 }

@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @DynamicInsert
 @DynamicUpdate
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class TeamAuth {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +36,9 @@ public class TeamAuth {
 	
 	@Column(name = "name", nullable = false)
 	private String name;
+	
+	@Column(name = "type", columnDefinition = "tinyint(2) not null default 0 comment '권한 분류'")
+	private int type;
 	
 	@Embedded
 	private MasterAuth masterAuth;
@@ -57,6 +60,7 @@ public class TeamAuth {
 	
 	public void update(TeamAuthDto.UpdateRequest updateRequest) {
 		this.name = updateRequest.getName();
+		this.type = updateRequest.getType().getTeamAuthTypeValue();
 		this.masterAuth = updateRequest.getMasterAuth();
 		this.memberControllAuth = updateRequest.getMemberControllAuth();
 		this.activeAuth = updateRequest.getActiveAuth();

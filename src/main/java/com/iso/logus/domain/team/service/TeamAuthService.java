@@ -9,14 +9,19 @@ import org.springframework.transaction.annotation.Transactional;
 import com.iso.logus.domain.team.domain.team.Team;
 import com.iso.logus.domain.team.domain.teamauth.TeamAuth;
 import com.iso.logus.domain.team.domain.teamauth.TeamAuthRepository;
+import com.iso.logus.domain.team.domain.teamauth.TeamAuthType;
 import com.iso.logus.domain.team.dto.TeamAuthDto;
 import com.iso.logus.domain.team.dto.TeamAuthDto.SaveRequest;
 import com.iso.logus.domain.team.dto.TeamAuthDto.UpdateRequest;
+import com.iso.logus.domain.team.exception.TeamAuthMasterAuthException;
 import com.iso.logus.domain.team.exception.TeamAuthNameDuplicationException;
 import com.iso.logus.domain.team.exception.TeamAuthNotFoundException;
+import com.iso.logus.domain.team.exception.TeamAuthSpecialTypeDeleteException;
 import com.iso.logus.domain.team.exception.TeamNotFoundException;
+import com.iso.logus.global.exception.ServerErrorException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
@@ -49,20 +54,55 @@ public class TeamAuthService {
 		return teamAuthRepository.existsByTeamIdAndName(teamId, name);
 	}
 
-	public void createTeamAuth(long teamId, SaveRequest saveRequest) {
+	public TeamAuth createTeamAuth(long teamId, SaveRequest saveRequest) {
 		if(isExistedTeamAuth(teamId, saveRequest.getName()))
 			throw new TeamAuthNameDuplicationException();
 		Team team = teamService.findTeamById(teamId);
-		teamAuthRepository.save(saveRequest.toEntity(team));
+		return teamAuthRepository.save(saveRequest.toEntity(team));
 	}
 
-	public void changeTeamAuth(long teamId, String name, UpdateRequest updateRequest) {
+	public TeamAuth changeTeamAuth(long teamId, String name, UpdateRequest updateRequest) {
 		TeamAuth teamAuth = teamAuthRepository.findByTeamIdAndName(teamId, name).orElseThrow(TeamAuthNotFoundException::new);
+		if(masterAuthCheck(teamAuth, updateRequest))
+			throw new TeamAuthMasterAuthException();
+		defaultAuthCheck(teamAuth, updateRequest);
 		teamAuth.update(updateRequest);
+		return teamAuth;
 	}
 
 	public void deleteTeamAuth(long teamId, String name) {
-		teamAuthRepository.deleteByTeamIdAndName(teamId, name);
+		TeamAuth teamAuth = teamAuthRepository.findByTeamIdAndName(teamId, name).orElseThrow(TeamAuthNotFoundException::new);
+		if(TeamAuthType.values()[teamAuth.getType()] != TeamAuthType.NONE)
+			throw new TeamAuthSpecialTypeDeleteException();
+		teamAuthRepository.delete(teamAuth);
 	}
 	
+	public boolean masterAuthCheck(TeamAuth teamAuth, UpdateRequest updateRequest) {
+		if(TeamAuthType.values()[teamAuth.getType()] == TeamAuthType.MASTER) {
+			//권한 체크
+			if(!updateRequest.getMasterAuth().checkAllTrue() || 
+				!updateRequest.getMemberControllAuth().checkAllTrue() || 
+				!updateRequest.getActiveAuth().checkAllTrue())
+				return true;
+			//분류 체크
+			if(updateRequest.getType() != TeamAuthType.MASTER)
+				return true;
+		}
+		return false;
+	}
+	
+	public void defaultAuthCheck(TeamAuth teamAuth, UpdateRequest updateRequest) {
+		if(TeamAuthType.values()[teamAuth.getType()] == TeamAuthType.NONE &&
+			updateRequest.getType() == TeamAuthType.DEFAULT) {
+			TeamAuth originDefaultAuth = teamAuthRepository.findByTeamIdAndTypeEqual(teamAuth.getTeam().getId(), TeamAuthType.DEFAULT.getTeamAuthTypeValue()).orElseThrow(ServerErrorException::new);
+			UpdateRequest originUpdateRequest = UpdateRequest.builder()
+					.name(originDefaultAuth.getName())
+					.type(TeamAuthType.NONE)
+					.masterAuth(originDefaultAuth.getMasterAuth())
+					.memberControllAuth(originDefaultAuth.getMemberControllAuth())
+					.activeAuth(originDefaultAuth.getActiveAuth())
+					.build();
+			originDefaultAuth.update(originUpdateRequest);
+		}
+	}
 }

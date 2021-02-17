@@ -19,6 +19,7 @@ import com.iso.logus.domain.team.domain.team.Team;
 import com.iso.logus.domain.team.domain.team.TeamRepository;
 import com.iso.logus.domain.team.domain.teamauth.TeamAuth;
 import com.iso.logus.domain.team.domain.teamauth.TeamAuthRepository;
+import com.iso.logus.team.TeamTestSampleData;
 
 @DataJpaTest
 @Disabled
@@ -31,7 +32,7 @@ public class TeamRepositoryTest {
 	@Autowired
 	private TeamAuthRepository teamAuthRepository;
 	
-	private final TeamAuthSampleData sampleData = new TeamAuthSampleData();
+	private final TeamTestSampleData sampleData = new TeamTestSampleData();
 	
 	@Test
 	public void findByTeamIdTest() {

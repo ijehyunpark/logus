@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import com.iso.logus.domain.team.domain.teamauth.TeamAuth;
+import com.iso.logus.domain.team.domain.teamuser.TeamUser;
 import com.iso.logus.domain.team.dto.TeamDto;
 import com.iso.logus.global.domain.TimeEntity;
 
@@ -37,6 +38,9 @@ public class Team extends TimeEntity {
 	
 	@OneToMany(mappedBy = "team", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<TeamAuth> teamAuths = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "team", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<TeamUser> teamUsers = new ArrayList<>();
 	
 	@Builder
 	public Team(String name, String descript) {

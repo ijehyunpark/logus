@@ -1,15 +1,9 @@
 package com.iso.logus.global.error;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.http.HttpStatus;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.iso.logus.domain.team.exception.TeamAuthMasterAuthException;
 import com.iso.logus.domain.team.exception.TeamAuthNameDuplicationException;
 import com.iso.logus.domain.team.exception.TeamNotFoundException;
 import com.iso.logus.domain.user.exception.PasswordFailedExceededException;
@@ -41,7 +36,7 @@ public class ErrorExceptionHandler {
 		return build(ErrorCode.REQUEST_ERROR, e, fieldErrors);
 	}
 	
-	@ExceptionHandler(value = {WrongPasswordException.class})
+	@ExceptionHandler(value = {WrongPasswordException.class, TeamAuthMasterAuthException.class})
 	@ResponseStatus(HttpStatus.BAD_REQUEST) //400_ERROR
 	protected ErrorResponse handleBadRequestException(CustomException e) {
 		return build(e.getErrorCode(), e);

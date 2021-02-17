@@ -5,8 +5,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -25,8 +27,10 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.iso.logus.domain.team.domain.team.Team;
 import com.iso.logus.domain.team.domain.team.TeamRepository;
+import com.iso.logus.domain.team.domain.teamauth.TeamAuthRepository;
 import com.iso.logus.domain.team.dto.TeamDto;
 import com.iso.logus.domain.team.exception.TeamNotFoundException;
+import com.iso.logus.domain.team.service.TeamAuthBaseData;
 import com.iso.logus.domain.team.service.TeamService;
 
 @ActiveProfiles("test")
@@ -38,6 +42,12 @@ public class TeamServiceTest {
 	
 	@Mock
 	private TeamRepository teamRepository;
+	
+	@Mock
+	private TeamAuthRepository teamAuthRepository;
+	
+	@Mock
+	private TeamAuthBaseData baseData;
 	
 	private static Team team1, team2;
 	
@@ -177,12 +187,15 @@ public class TeamServiceTest {
 				.name("testTeam")
 				.descript("sample")
 				.build();
+		Team saveReturn = createRequest.toEntity();
+		saveReturn.setIdForTest(1L);
+		given(teamRepository.save(any(Team.class))).willReturn(saveReturn);
 		
 		//when
 		teamService.createTeam(createRequest);
 		
 		//then
-		
+		verify(teamRepository, atLeastOnce()).save(any(Team.class));
 	}
 	
 	@Test

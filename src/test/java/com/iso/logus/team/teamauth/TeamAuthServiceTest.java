@@ -4,6 +4,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -22,14 +25,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.iso.logus.domain.team.domain.team.Team;
-import com.iso.logus.domain.team.domain.team.TeamRepository;
 import com.iso.logus.domain.team.domain.teamauth.TeamAuth;
 import com.iso.logus.domain.team.domain.teamauth.TeamAuthRepository;
+import com.iso.logus.domain.team.domain.teamauth.TeamAuthType;
 import com.iso.logus.domain.team.dto.TeamAuthDto;
+import com.iso.logus.domain.team.exception.TeamAuthMasterAuthException;
 import com.iso.logus.domain.team.exception.TeamAuthNameDuplicationException;
+import com.iso.logus.domain.team.exception.TeamAuthSpecialTypeDeleteException;
 import com.iso.logus.domain.team.exception.TeamNotFoundException;
+import com.iso.logus.domain.team.service.TeamAuthBaseData;
 import com.iso.logus.domain.team.service.TeamAuthService;
 import com.iso.logus.domain.team.service.TeamService;
+import com.iso.logus.team.TeamTestSampleData;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
@@ -44,7 +51,8 @@ public class TeamAuthServiceTest {
 	@Mock
 	private TeamService teamService;
 	
-	private final static TeamAuthSampleData sampleData = new TeamAuthSampleData();
+	private final static TeamTestSampleData sampleData = new TeamTestSampleData();
+	private final static TeamAuthBaseData baseData = new TeamAuthBaseData();
 	
 	private static Long teamMockId;
 	private static Team team;
@@ -68,10 +76,10 @@ public class TeamAuthServiceTest {
 		teamAuthList.add(allTrueAuth);
 		teamAuthList.add(allFalseAuth);
 		teamAuthList.add(sampleAuth);
-		given(teamAuthRepository.findByTeamId(team.getId())).willReturn(teamAuthList);
+		given(teamAuthRepository.findByTeamId(anyLong())).willReturn(teamAuthList);
 		
 		//when
-		List<TeamAuthDto.Response> result = teamAuthService.findList(team.getId());
+		List<TeamAuthDto.Response> result = teamAuthService.findList(anyLong());
 		
 		//then
 		assertNotNull(result);
@@ -82,11 +90,11 @@ public class TeamAuthServiceTest {
 	@DisplayName("findList: 존재하지 않는 team 식별자로 조회 후 TeamNotFoundException 반환 테스트")
 	public void findListTest_NotExistTeamId() {
 		//given
-		given(teamAuthRepository.findByTeamId(team.getId())).willReturn(List.of());
+		given(teamAuthRepository.findByTeamId(anyLong())).willReturn(List.of());
 		
 		//when
 		assertThrows(TeamNotFoundException.class, () -> {
-			teamAuthService.findList(team.getId());
+			teamAuthService.findList(anyLong());
 		});
 
 		//then
@@ -126,7 +134,7 @@ public class TeamAuthServiceTest {
 	@DisplayName("changeTeamAuth: 팀 권한 사항 수정 테스트")
 	public void changeTeamAuthTest() {
 		//given
-		final TeamAuthDto.UpdateRequest updateRequest = sampleData.updateRequestBuilder();
+		final TeamAuthDto.UpdateRequest updateRequest = sampleData.updateRequestBuilder("changed", TeamAuthType.NONE);
 		final TeamAuth targetAuth = sampleData.returnSampleAuth(team);
 		given(teamAuthRepository.findByTeamIdAndName(teamMockId, "special-class")).willReturn(Optional.of(targetAuth));
 		
@@ -138,14 +146,103 @@ public class TeamAuthServiceTest {
 	}
 	
 	@Test
+	@DisplayName("changeTeamAuth: 마스터 권한의 모든 권한은 항상 참이어야 함")
+	public void changeTeamAuthTest_MasterAuth1() {
+		//given
+		final TeamAuthDto.UpdateRequest updateRequest = sampleData.updateRequestBuilder("Team Master", TeamAuthType.MASTER);
+		final TeamAuth masterAuth = baseData.createMasterAuth(team);
+		given(teamAuthRepository.findByTeamIdAndName(teamMockId, "Team Master")).willReturn(Optional.of(masterAuth));
+		
+		//when
+		assertThrows(TeamAuthMasterAuthException.class, () -> {
+			teamAuthService.changeTeamAuth(team.getId(), "Team Master", updateRequest);
+		});
+		
+		//then
+		
+	}
+	
+	@Test
+	@DisplayName("changeTeamAuth: 마스터 권한의 분류를 수정할 수 없음")
+	public void changeTeamAuthTest_MasterAuth2() {
+		//given
+		
+		final TeamAuthDto.UpdateRequest updateRequest = sampleData.updateMasterBuilder("Team Master", TeamAuthType.DEFAULT);
+		final TeamAuth masterAuth = baseData.createMasterAuth(team);
+		given(teamAuthRepository.findByTeamIdAndName(teamMockId, "Team Master")).willReturn(Optional.of(masterAuth));
+		
+		//when
+		assertThrows(TeamAuthMasterAuthException.class, () -> {
+			teamAuthService.changeTeamAuth(team.getId(), "Team Master", updateRequest);
+		});
+		
+		//then
+		
+	}
+	
+	@Test
+	@DisplayName("changeTeamAuth: 마스터 권한의 이름은 수정될 수 있음")
+	public void changeTeamAuthTest_MasterAuth3() {
+		//given
+		final TeamAuthDto.UpdateRequest updateRequest = sampleData.updateMasterBuilder("changed", TeamAuthType.MASTER);
+		final TeamAuth masterAuth = baseData.createMasterAuth(team);
+		given(teamAuthRepository.findByTeamIdAndName(anyLong(), anyString())).willReturn(Optional.of(masterAuth));
+		
+		//when
+		teamAuthService.changeTeamAuth(anyLong(), anyString(), updateRequest);
+		
+		//then
+		assertThat(masterAuth.getName(), is("changed"));
+		
+	}
+	
+	@Test
+	@DisplayName("changeTeamAuth: 일반 분류의 권한이 기본 분류로 수정되면 기존의 기본 분류 권한은 일반으로 분류됨")
+	public void changeTeamAuthTest_DefaultAuth1() {
+		//given
+		final TeamAuthDto.UpdateRequest updateRequest = sampleData.updateRequestBuilder("New Default Auth", TeamAuthType.DEFAULT);
+		final TeamAuth orginDefaultAuth = baseData.createDefaultAuth(team);
+		final TeamAuth newDefaultAuth = sampleData.returnSampleAuth(team);
+		given(teamAuthRepository.findByTeamIdAndTypeEqual(anyLong(), eq(TeamAuthType.DEFAULT.getTeamAuthTypeValue())))
+			.willReturn(Optional.of(orginDefaultAuth));
+		given(teamAuthRepository.findByTeamIdAndName(anyLong(), anyString())).willReturn(Optional.of(newDefaultAuth));
+		
+		//when
+		teamAuthService.changeTeamAuth(anyLong(), anyString(), updateRequest);
+		
+		//then
+		assertThat(TeamAuthType.values()[newDefaultAuth.getType()], is(TeamAuthType.DEFAULT));
+		assertThat(TeamAuthType.values()[orginDefaultAuth.getType()], is(TeamAuthType.NONE));
+		
+	}
+	
+	@Test
 	@DisplayName("deleteTeamAuth: 팀 권한 삭제 테스트")
 	public void deleteTeamAuth() {
 		//given
+		final TeamAuth sampleAuth = sampleData.returnSampleAuth(team);
+		given(teamAuthRepository.findByTeamIdAndName(anyLong(), anyString())).willReturn(Optional.of(sampleAuth));
 		
 		//when
-		teamAuthService.deleteTeamAuth(teamMockId, "special-class");
+		teamAuthService.deleteTeamAuth(anyLong(), anyString());
 		
 		//then
-		verify(teamAuthRepository, times(1)).deleteByTeamIdAndName(teamMockId, "special-class");
+		verify(teamAuthRepository, times(1)).delete(sampleAuth);
+	}
+	
+	@Test
+	@DisplayName("deleteTeamAuth: 특수 분류가 된 권한은 삭제 될 수 없음")
+	public void deleteTeamAuth_Type() {
+		//given
+		final TeamAuth masterAuth = baseData.createMasterAuth(team);
+		given(teamAuthRepository.findByTeamIdAndName(anyLong(), anyString())).willReturn(Optional.of(masterAuth));
+		
+		//when
+		assertThrows(TeamAuthSpecialTypeDeleteException.class, () -> {
+			teamAuthService.deleteTeamAuth(anyLong(), anyString());
+		});
+		
+		//then
+	
 	}
 }

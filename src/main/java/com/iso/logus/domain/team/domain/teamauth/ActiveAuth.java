@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Embeddable
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class ActiveAuth implements DetailAuth {
 	//private boolean logWriteAuth;
 	
@@ -27,12 +27,17 @@ public class ActiveAuth implements DetailAuth {
 	}
 	
 	@Override
-	public void setAllTrue() {
+	public void makeAllTrue() {
 		
 	}
 
 	@Override
-	public void setAllFalse() {
+	public void makeAllFalse() {
 		
+	}
+
+	@Override
+	public boolean checkAllTrue() {
+		return true;
 	}
 }

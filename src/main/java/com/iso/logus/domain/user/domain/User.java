@@ -1,15 +1,21 @@
 package com.iso.logus.domain.user.domain;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.iso.logus.domain.team.domain.teamuser.TeamUser;
 import com.iso.logus.domain.user.dto.UserDto;
 import com.iso.logus.global.domain.TimeEntity;
 
@@ -31,6 +37,9 @@ public class User extends TimeEntity implements UserDetails {
 	
 	@Embedded
 	private Password passwordDetail;
+	
+	@OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<TeamUser> teamUsers = new ArrayList<>();
 	
 	@Builder
 	public User (String uid, String name, Password password){

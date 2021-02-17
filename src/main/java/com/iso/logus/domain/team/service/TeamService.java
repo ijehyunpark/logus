@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.iso.logus.domain.team.domain.team.Team;
 import com.iso.logus.domain.team.domain.team.TeamRepository;
+import com.iso.logus.domain.team.domain.teamauth.TeamAuthRepository;
 import com.iso.logus.domain.team.dto.TeamDto;
 import com.iso.logus.domain.team.exception.TeamNotFoundException;
 
@@ -19,6 +20,9 @@ import lombok.RequiredArgsConstructor;
 public class TeamService {
 
 	private final TeamRepository teamRepository;
+	private final TeamAuthRepository teamAuthRepository;
+	
+	private final TeamAuthBaseData baseData;
 	
 	public List<TeamDto.Response> changeResponseDto(List<Team> teamList) {
 		List<TeamDto.Response> dtoList = new ArrayList<>();
@@ -52,13 +56,18 @@ public class TeamService {
 		return teamRepository.findById(id).orElseThrow(TeamNotFoundException::new);
 	}
 	
-	public void createTeam(TeamDto.CreateRequest createRequest) {
-		teamRepository.save(createRequest.toEntity());
+	public Team createTeam(TeamDto.CreateRequest createRequest) {
+		Team team = teamRepository.save(createRequest.toEntity());
+		teamRepository.flush();
+		teamAuthRepository.save(baseData.createMasterAuth(team));
+		teamAuthRepository.save(baseData.createDefaultAuth(team));
+		return team;
 	}
 
-	public void changeTeamDescript(long id, TeamDto.ChangeDescriptRequest changeDescriptRequest) {
+	public Team changeTeamDescript(long id, TeamDto.ChangeDescriptRequest changeDescriptRequest) {
 		Team team = findTeamById(id);
 		team.changeDescript(changeDescriptRequest);
+		return team;
 	}
 	
 	public void deleteTeam(long id) {

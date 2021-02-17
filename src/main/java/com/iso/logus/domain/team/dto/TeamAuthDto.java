@@ -7,6 +7,7 @@ import com.iso.logus.domain.team.domain.teamauth.ActiveAuth;
 import com.iso.logus.domain.team.domain.teamauth.MasterAuth;
 import com.iso.logus.domain.team.domain.teamauth.MemberControllAuth;
 import com.iso.logus.domain.team.domain.teamauth.TeamAuth;
+import com.iso.logus.domain.team.domain.teamauth.TeamAuthType;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,12 +20,14 @@ public class TeamAuthDto {
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
 	public static class Response {
 		private String name;
+		private TeamAuthType type;
 		private MasterAuth masterAuth;
 		private MemberControllAuth memberControllAuth;
 		private ActiveAuth activeAuth;
 		
 		public Response(TeamAuth teamAuth) {
 			this.name = teamAuth.getName();
+			this.type = TeamAuthType.values()[teamAuth.getType()];
 			this.masterAuth = teamAuth.getMasterAuth();
 			this.memberControllAuth = teamAuth.getMemberControllAuth();
 			this.activeAuth = teamAuth.getActiveAuth();
@@ -64,13 +67,15 @@ public class TeamAuthDto {
 	public static class UpdateRequest {
 		@NotEmpty
 		private String name;
+		private TeamAuthType type;
 		private MasterAuth masterAuth;
 		private MemberControllAuth memberControllAuth;
 		private ActiveAuth activeAuth;
 		
 		@Builder
-		public UpdateRequest(String name, MasterAuth masterAuth, MemberControllAuth memberControllAuth, ActiveAuth activeAuth) {
+		public UpdateRequest(String name, TeamAuthType type, MasterAuth masterAuth, MemberControllAuth memberControllAuth, ActiveAuth activeAuth) {
 			this.name = name;
+			this.type = type;
 			this.masterAuth = masterAuth;
 			this.memberControllAuth = memberControllAuth;
 			this.activeAuth = activeAuth;

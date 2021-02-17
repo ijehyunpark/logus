@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Embeddable
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class MasterAuth implements DetailAuth {
 	@Column(name = "master_auth", columnDefinition = "tinyint(1) not null default false comment '최종 관리자 권한'")
 	private boolean masterAuth;
@@ -35,16 +35,21 @@ public class MasterAuth implements DetailAuth {
 	}
 	
 	@Override
-	public void setAllTrue() {
+	public void makeAllTrue() {
 		this.masterAuth = true;
 		this.teamNameAuth = true;
 		this.authManageAuth = true;
 	}
 
 	@Override
-	public void setAllFalse() {
+	public void makeAllFalse() {
 		this.masterAuth = false;
 		this.teamNameAuth = false;
 		this.authManageAuth = false;
+	}
+
+	@Override
+	public boolean checkAllTrue() {
+		return masterAuth && teamNameAuth && authManageAuth;
 	}
 }
