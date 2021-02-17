@@ -28,6 +28,9 @@ public class TeamTestSampleData {
 	}
 	
 	public TeamAuth returnAllTrueAuth(Team team) {
+		return returnAllTrueAuth(team, "allTrueAuth");
+	}
+	public TeamAuth returnAllTrueAuth(Team team, String name) {
 		MasterAuth masterTrueAuth = MasterAuth.builder().build();
 		MemberControllAuth memberControllTrueAuth = MemberControllAuth.builder().build();
 		ActiveAuth activeTrueAuth = ActiveAuth.builder().build();
@@ -35,7 +38,7 @@ public class TeamTestSampleData {
 		memberControllTrueAuth.makeAllTrue();
 		activeTrueAuth.makeAllTrue();
 		return TeamAuthDto.SaveRequest.builder()
-						.name("first-class")
+						.name(name)
 						.masterAuth(masterTrueAuth)
 						.memberControllAuth(memberControllTrueAuth)
 						.activeAuth(activeTrueAuth)
@@ -44,6 +47,10 @@ public class TeamTestSampleData {
 	}
 	
 	public TeamAuth returnAllFalseAuth(Team team) {
+		return returnAllFalseAuth(team, "allFalseAuth");
+	}
+	
+	public TeamAuth returnAllFalseAuth(Team team, String name) {
 		MasterAuth masterFalseAuth = MasterAuth.builder().build();
 		MemberControllAuth memberControllFalseAuth = MemberControllAuth.builder().build();
 		ActiveAuth activeFalseAuth = ActiveAuth.builder().build();
@@ -51,7 +58,7 @@ public class TeamTestSampleData {
 		memberControllFalseAuth.makeAllFalse();
 		activeFalseAuth.makeAllFalse();
 		return TeamAuthDto.SaveRequest.builder()
-						.name("last-class")
+						.name(name)
 						.masterAuth(masterFalseAuth)
 						.memberControllAuth(memberControllFalseAuth)
 						.activeAuth(activeFalseAuth)
@@ -60,6 +67,10 @@ public class TeamTestSampleData {
 	}
 	
 	public TeamAuth returnSampleAuth(Team team) {
+		return returnSampleAuth(team, "sampleAuth");
+	}
+	
+	public TeamAuth returnSampleAuth(Team team, String name) {
 		MasterAuth masterCustomAuth = MasterAuth.builder()
 				.masterAuth(false)
 				.teamNameAuth(true)
@@ -73,7 +84,7 @@ public class TeamTestSampleData {
 		ActiveAuth activeCustomAuth = ActiveAuth.builder()
 				.build();
 		return TeamAuthDto.SaveRequest.builder()
-						.name("special-class")
+						.name(name)
 						.masterAuth(masterCustomAuth)
 						.memberControllAuth(memberControllCustomAuth)
 						.activeAuth(activeCustomAuth)

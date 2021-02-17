@@ -53,6 +53,11 @@ public class TeamAuthService {
 	public boolean isExistedTeamAuth(long teamId, String name) {
 		return teamAuthRepository.existsByTeamIdAndName(teamId, name);
 	}
+	
+	@Transactional(readOnly = true)
+	public TeamAuth findTeamAuthByTeamIdName(long teamId, String name) {
+		return teamAuthRepository.findByTeamIdAndName(teamId, name).orElseThrow(TeamAuthNotFoundException::new);
+	}
 
 	public TeamAuth createTeamAuth(long teamId, SaveRequest saveRequest) {
 		if(isExistedTeamAuth(teamId, saveRequest.getName()))
@@ -62,7 +67,7 @@ public class TeamAuthService {
 	}
 
 	public TeamAuth changeTeamAuth(long teamId, String name, UpdateRequest updateRequest) {
-		TeamAuth teamAuth = teamAuthRepository.findByTeamIdAndName(teamId, name).orElseThrow(TeamAuthNotFoundException::new);
+		TeamAuth teamAuth = findTeamAuthByTeamIdName(teamId, name);
 		if(masterAuthCheck(teamAuth, updateRequest))
 			throw new TeamAuthMasterAuthException();
 		defaultAuthCheck(teamAuth, updateRequest);
@@ -75,6 +80,11 @@ public class TeamAuthService {
 		if(TeamAuthType.values()[teamAuth.getType()] != TeamAuthType.NONE)
 			throw new TeamAuthSpecialTypeDeleteException();
 		teamAuthRepository.delete(teamAuth);
+	}
+	
+	@Transactional(readOnly = true)
+	public TeamAuth findDefaultAuth(long team_id) {
+		return teamAuthRepository.findByTeamIdAndTypeEqual(team_id, TeamAuthType.DEFAULT.getTeamAuthTypeValue()).orElseThrow(ServerErrorException::new);
 	}
 	
 	public boolean masterAuthCheck(TeamAuth teamAuth, UpdateRequest updateRequest) {
@@ -94,7 +104,7 @@ public class TeamAuthService {
 	public void defaultAuthCheck(TeamAuth teamAuth, UpdateRequest updateRequest) {
 		if(TeamAuthType.values()[teamAuth.getType()] == TeamAuthType.NONE &&
 			updateRequest.getType() == TeamAuthType.DEFAULT) {
-			TeamAuth originDefaultAuth = teamAuthRepository.findByTeamIdAndTypeEqual(teamAuth.getTeam().getId(), TeamAuthType.DEFAULT.getTeamAuthTypeValue()).orElseThrow(ServerErrorException::new);
+			TeamAuth originDefaultAuth = findDefaultAuth(teamAuth.getTeam().getId());
 			UpdateRequest originUpdateRequest = UpdateRequest.builder()
 					.name(originDefaultAuth.getName())
 					.type(TeamAuthType.NONE)

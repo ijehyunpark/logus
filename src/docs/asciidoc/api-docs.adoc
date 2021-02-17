@@ -193,7 +193,7 @@ include::{snippets}/team-deleteTeam/http-request.adoc[]
 ===== Response HTTP Example
 include::{snippets}/team-deleteTeam/http-response.adoc[]
 
-== 팀 권한 설정(Teamauthority)
+== 팀 권한 설정(Team authority)
 
 === 해당 팀의 모든 권한 조회
 Get /api/team/auth/{team_id}
@@ -250,3 +250,88 @@ include::{snippets}/teamAuth-deleteTeamAuth/http-request.adoc[]
 ===== Response HTTP Example
 include::{snippets}/teamAuth-deleteTeamAuth/http-response.adoc[]
 
+== 팀 참가자(Team member)
+
+=== 해당 팀의 모든 참가자 조회
+Get /api/team/member/find/member/{team_id}
+
+==== Request
+
+==== Request HTTP Example
+include::{snippets}/teamUser-findAllMemberByTeam/http-request.adoc[]
+
+==== Response
+include::{snippets}/teamUser-findAllMemberByTeam/response-fields.adoc[]
+
+===== Response HTTP Example
+include::{snippets}/teamUser-findAllMemberByTeam/http-response.adoc[]
+
+=== 해당 유저가 참여중인 모든 팀 조회
+Get /api/team/member/find/team/{uid}
+
+==== Request
+
+==== Request HTTP Example
+include::{snippets}/teamUser-findAllTeamByUser/http-request.adoc[]
+
+==== Response
+include::{snippets}/teamUser-findAllTeamByUser/response-fields.adoc[]
+
+===== Response HTTP Example
+include::{snippets}/teamUser-findAllTeamByUser/http-response.adoc[]
+
+=== 팀에 새로운 유저 추가
+Post /api/team/member/join
+
+==== Request
+include::{snippets}/teamUser-joinNewMember/request-fields.adoc[]
+
+==== Request HTTP Example
+include::{snippets}/teamUser-joinNewMember/http-request.adoc[]
+
+==== Response
+
+===== Response HTTP Example
+include::{snippets}/teamUser-joinNewMember/http-response.adoc[]
+
+=== 팀에서 탈퇴
+Post /api/team/member/quit
+
+==== Request
+include::{snippets}/teamUser-quitMember/request-fields.adoc[]
+
+==== Request HTTP Example
+include::{snippets}/teamUser-quitMember/http-request.adoc[]
+
+==== Response
+
+==== Response HTTP Example
+include::{snippets}/teamUser-quitMember/http-request.adoc[]
+
+=== 팀에 속한 특정 유저의 팀 권한을 변경
+Patch /api/team/member/auth
+
+==== Request
+include::{snippets}/teamUser-changeAuth/request-fields.adoc[]
+
+==== Request HTTP Example
+include::{snippets}/teamUser-changeAuth/http-request.adoc[]
+
+==== Response
+
+==== Response HTTP Example
+include::{snippets}/teamUser-changeAuth/http-request.adoc[]
+
+=== 팀에 속한 특정 유저의 팀에서 사용하는 이름 변경
+Patch /api/team/member/name
+
+==== Request
+include::{snippets}/teamUser-changeAuth/request-fields.adoc[]
+
+==== Request HTTP Example
+include::{snippets}/teamUser-changeAuth/http-request.adoc[]
+
+==== Response
+
+==== Response HTTP Example
+include::{snippets}/teamUser-changeAuth/http-request.adoc[]

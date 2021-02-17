@@ -56,9 +56,9 @@ public class TeamAuthControllerTest extends ControllerTest {
 	public void findTeamAuthListTest() throws Exception {
 		//given
 		List<TeamAuthDto.Response> dtoList = new ArrayList<>();
-		dtoList.add(new TeamAuthDto.Response(sampleData.returnAllTrueAuth(team)));
-		dtoList.add(new TeamAuthDto.Response(sampleData.returnAllFalseAuth(team)));
-		dtoList.add(new TeamAuthDto.Response(sampleData.returnSampleAuth(team)));
+		dtoList.add(new TeamAuthDto.Response(sampleData.returnAllTrueAuth(team,"First Rank")));
+		dtoList.add(new TeamAuthDto.Response(sampleData.returnAllFalseAuth(team,"Normal Rank")));
+		dtoList.add(new TeamAuthDto.Response(sampleData.returnSampleAuth(team, "Custom Rank")));
 		given(teamAuthSerive.findList(anyLong())).willReturn(dtoList);
 		
 		//when
