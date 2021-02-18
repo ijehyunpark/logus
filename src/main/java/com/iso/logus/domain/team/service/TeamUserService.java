@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class TeamUserService {
 
 	private final TeamUserRepository teamUserRepository;
-	private final TeamService teamService;
+	private final TeamSearchService teamSearchService;
 	private final UserService userService;
 	private final TeamAuthService teamAuthService;
 	
@@ -70,7 +70,7 @@ public class TeamUserService {
 	}
 	
 	public TeamUser joinNewMember(TeamUserDto.JoinRequest joinRequest) {
-		Team team = teamService.findTeamById(joinRequest.getTeamId());
+		Team team = teamSearchService.findTeamById(joinRequest.getTeamId());
 		User user = userService.findUserByUid(joinRequest.getUid());
 		TeamAuth teamAuth = teamAuthService.findDefaultAuth(joinRequest.getTeamId());
 		return teamUserRepository.save(joinRequest.toEntity(team, user, teamAuth));

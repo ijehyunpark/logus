@@ -20,7 +20,7 @@ deploy:
   provider: releases
   api_key: $TOKEN
   file: 
-    - "deploy/webbot-v0.0.1.jar"
+    - "deploy/logus-v0.0.1"
     
   file_glob: true
   cleanup: false

@@ -35,7 +35,7 @@ import com.iso.logus.domain.team.exception.TeamAuthSpecialTypeDeleteException;
 import com.iso.logus.domain.team.exception.TeamNotFoundException;
 import com.iso.logus.domain.team.service.TeamAuthBaseData;
 import com.iso.logus.domain.team.service.TeamAuthService;
-import com.iso.logus.domain.team.service.TeamService;
+import com.iso.logus.domain.team.service.TeamSearchService;
 import com.iso.logus.team.TeamTestSampleData;
 
 @ActiveProfiles("test")
@@ -49,7 +49,7 @@ public class TeamAuthServiceTest {
 	private TeamAuthRepository teamAuthRepository;
 	
 	@Mock
-	private TeamService teamService;
+	private TeamSearchService teamSearchService;
 	
 	private final static TeamTestSampleData sampleData = new TeamTestSampleData();
 	private final static TeamAuthBaseData baseData = new TeamAuthBaseData();
@@ -105,12 +105,12 @@ public class TeamAuthServiceTest {
 	@DisplayName("createTeamAuth: 팀 권한 생성 테스트")
 	public void createTeamAuthTest() {
 		//given
-		final TeamAuthDto.SaveRequest saveRequest = sampleData.saveRequestBuilder();
-		given(teamService.findTeamById(teamMockId)).willReturn(team);
+		final TeamAuthDto.SaveRequest saveRequest = sampleData.saveRequestBuilder(teamMockId);
+		given(teamSearchService.findTeamById(teamMockId)).willReturn(team);
 		given(teamAuthRepository.existsByTeamIdAndName(teamMockId, saveRequest.getName())).willReturn(false);
 		
 		//when
-		teamAuthService.createTeamAuth(team.getId(), saveRequest);
+		teamAuthService.createTeamAuth(saveRequest);
 		
 		//then
 	}
@@ -119,12 +119,12 @@ public class TeamAuthServiceTest {
 	@DisplayName("createTeamAuth: 같은 이름의 팀 권한이 존재할 경우")
 	public void createTeamAuthWithSameNameTest() {
 		//given
-		final TeamAuthDto.SaveRequest saveRequest = sampleData.saveRequestBuilder();
+		final TeamAuthDto.SaveRequest saveRequest = sampleData.saveRequestBuilder(teamMockId);
 		given(teamAuthRepository.existsByTeamIdAndName(teamMockId, saveRequest.getName())).willReturn(true);
 		
 		//when
 		assertThrows(TeamAuthNameDuplicationException.class, () -> {
-			teamAuthService.createTeamAuth(team.getId(), saveRequest);
+			teamAuthService.createTeamAuth(saveRequest);
 		});
 		
 		//then
@@ -134,28 +134,28 @@ public class TeamAuthServiceTest {
 	@DisplayName("changeTeamAuth: 팀 권한 사항 수정 테스트")
 	public void changeTeamAuthTest() {
 		//given
-		final TeamAuthDto.UpdateRequest updateRequest = sampleData.updateRequestBuilder("changed", TeamAuthType.NONE);
+		final TeamAuthDto.UpdateRequest updateRequest = sampleData.updateRequestBuilder(teamMockId, "special-class", "changed", TeamAuthType.NONE);
 		final TeamAuth targetAuth = sampleData.returnSampleAuth(team);
 		given(teamAuthRepository.findByTeamIdAndName(teamMockId, "special-class")).willReturn(Optional.of(targetAuth));
 		
 		//when
-		teamAuthService.changeTeamAuth(team.getId(), "special-class", updateRequest);
+		teamAuthService.changeTeamAuth(updateRequest);
 		
 		//then
-		assertThat(targetAuth.getName(), is(updateRequest.getName()));
+		assertThat(targetAuth.getName(), is(updateRequest.getChangeName()));
 	}
 	
 	@Test
 	@DisplayName("changeTeamAuth: 마스터 권한의 모든 권한은 항상 참이어야 함")
 	public void changeTeamAuthTest_MasterAuth1() {
 		//given
-		final TeamAuthDto.UpdateRequest updateRequest = sampleData.updateRequestBuilder("Team Master", TeamAuthType.MASTER);
+		final TeamAuthDto.UpdateRequest updateRequest = sampleData.updateRequestBuilder(team.getId(), "Team Master", "Team Master", TeamAuthType.MASTER);
 		final TeamAuth masterAuth = baseData.createMasterAuth(team);
 		given(teamAuthRepository.findByTeamIdAndName(teamMockId, "Team Master")).willReturn(Optional.of(masterAuth));
 		
 		//when
 		assertThrows(TeamAuthMasterAuthException.class, () -> {
-			teamAuthService.changeTeamAuth(team.getId(), "Team Master", updateRequest);
+			teamAuthService.changeTeamAuth(updateRequest);
 		});
 		
 		//then
@@ -167,13 +167,13 @@ public class TeamAuthServiceTest {
 	public void changeTeamAuthTest_MasterAuth2() {
 		//given
 		
-		final TeamAuthDto.UpdateRequest updateRequest = sampleData.updateMasterBuilder("Team Master", TeamAuthType.DEFAULT);
+		final TeamAuthDto.UpdateRequest updateRequest = sampleData.updateMasterBuilder(team.getId(), "Team Master", "Team Master", TeamAuthType.DEFAULT);
 		final TeamAuth masterAuth = baseData.createMasterAuth(team);
 		given(teamAuthRepository.findByTeamIdAndName(teamMockId, "Team Master")).willReturn(Optional.of(masterAuth));
 		
 		//when
 		assertThrows(TeamAuthMasterAuthException.class, () -> {
-			teamAuthService.changeTeamAuth(team.getId(), "Team Master", updateRequest);
+			teamAuthService.changeTeamAuth(updateRequest);
 		});
 		
 		//then
@@ -184,12 +184,12 @@ public class TeamAuthServiceTest {
 	@DisplayName("changeTeamAuth: 마스터 권한의 이름은 수정될 수 있음")
 	public void changeTeamAuthTest_MasterAuth3() {
 		//given
-		final TeamAuthDto.UpdateRequest updateRequest = sampleData.updateMasterBuilder("changed", TeamAuthType.MASTER);
+		final TeamAuthDto.UpdateRequest updateRequest = sampleData.updateMasterBuilder(0, "anyString", "changed", TeamAuthType.MASTER);
 		final TeamAuth masterAuth = baseData.createMasterAuth(team);
 		given(teamAuthRepository.findByTeamIdAndName(anyLong(), anyString())).willReturn(Optional.of(masterAuth));
 		
 		//when
-		teamAuthService.changeTeamAuth(anyLong(), anyString(), updateRequest);
+		teamAuthService.changeTeamAuth(updateRequest);
 		
 		//then
 		assertThat(masterAuth.getName(), is("changed"));
@@ -200,15 +200,15 @@ public class TeamAuthServiceTest {
 	@DisplayName("changeTeamAuth: 일반 분류의 권한이 기본 분류로 수정되면 기존의 기본 분류 권한은 일반으로 분류됨")
 	public void changeTeamAuthTest_DefaultAuth1() {
 		//given
-		final TeamAuthDto.UpdateRequest updateRequest = sampleData.updateRequestBuilder("New Default Auth", TeamAuthType.DEFAULT);
 		final TeamAuth orginDefaultAuth = baseData.createDefaultAuth(team);
 		final TeamAuth newDefaultAuth = sampleData.returnSampleAuth(team);
-		given(teamAuthRepository.findByTeamIdAndTypeEqual(anyLong(), eq(TeamAuthType.DEFAULT.getTeamAuthTypeValue())))
+		final TeamAuthDto.UpdateRequest updateRequest = sampleData.updateRequestBuilder(team.getId(), newDefaultAuth.getName(), "New Default Auth", TeamAuthType.DEFAULT);
+		given(teamAuthRepository.findByTeamIdAndTypeEqual(team.getId(), TeamAuthType.DEFAULT.getTeamAuthTypeValue()))
 			.willReturn(Optional.of(orginDefaultAuth));
-		given(teamAuthRepository.findByTeamIdAndName(anyLong(), anyString())).willReturn(Optional.of(newDefaultAuth));
+		given(teamAuthRepository.findByTeamIdAndName(team.getId(), newDefaultAuth.getName())).willReturn(Optional.of(newDefaultAuth));
 		
 		//when
-		teamAuthService.changeTeamAuth(anyLong(), anyString(), updateRequest);
+		teamAuthService.changeTeamAuth(updateRequest);
 		
 		//then
 		assertThat(TeamAuthType.values()[newDefaultAuth.getType()], is(TeamAuthType.DEFAULT));

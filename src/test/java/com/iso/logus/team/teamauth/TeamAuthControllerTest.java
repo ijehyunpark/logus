@@ -88,10 +88,10 @@ public class TeamAuthControllerTest extends ControllerTest {
 	@Test
 	public void createTeamAuthTest() throws Exception {
 		//given
-		TeamAuthDto.SaveRequest saveRequest = sampleData.saveRequestBuilder();
+		TeamAuthDto.SaveRequest saveRequest = sampleData.saveRequestBuilder(1);
 		
 		//when
-		ResultActions result = mockMvc.perform(post("/api/team/auth/1")
+		ResultActions result = mockMvc.perform(post("/api/team/auth")
 										.content(objectMapper.writeValueAsString(saveRequest))
 										.contentType(MediaType.APPLICATION_JSON));
 		
@@ -101,6 +101,7 @@ public class TeamAuthControllerTest extends ControllerTest {
 						ApiDocumentUtils.getDocumentRequest(),
 						ApiDocumentUtils.getDocumentResponse(),
 						requestFields(
+							fieldWithPath("teamId").type(JsonFieldType.NUMBER).description("팀 식별자"),	
 							fieldWithPath("name").type(JsonFieldType.STRING).description("권한 이름"),	
 							fieldWithPath("masterAuth.masterAuth").type(JsonFieldType.BOOLEAN).description("최종 관리자 권한 여부").optional(),
 							fieldWithPath("masterAuth.teamNameAuth").type(JsonFieldType.BOOLEAN).description("팀 이름 변경 권한 여부").optional(),
@@ -117,10 +118,10 @@ public class TeamAuthControllerTest extends ControllerTest {
 	@Test
 	public void changeTeamAuthTest() throws Exception {
 		//given
-		TeamAuthDto.UpdateRequest updateRequest = sampleData.updateRequestBuilder("changed auth name", TeamAuthType.NONE);
+		TeamAuthDto.UpdateRequest updateRequest = sampleData.updateRequestBuilder(1, "anyString", "changed auth name", TeamAuthType.NONE);
 		
 		//when
-		ResultActions result = mockMvc.perform(put("/api/team/auth/1/anyString")
+		ResultActions result = mockMvc.perform(put("/api/team/auth")
 				.content(objectMapper.writeValueAsString(updateRequest))
 				.contentType(MediaType.APPLICATION_JSON));
 		
@@ -130,7 +131,9 @@ public class TeamAuthControllerTest extends ControllerTest {
 						ApiDocumentUtils.getDocumentRequest(),
 						ApiDocumentUtils.getDocumentResponse(),
 						requestFields(
-							fieldWithPath("name").type(JsonFieldType.STRING).description("권한 이름"),
+							fieldWithPath("teamId").type(JsonFieldType.NUMBER).description("팀 식별자"),
+							fieldWithPath("originName").type(JsonFieldType.STRING).description("기존 권한 이름"),
+							fieldWithPath("changeName").type(JsonFieldType.STRING).description("변경된 권한 이름"),
 							fieldWithPath("type").type(JsonFieldType.STRING).description("팀 권한 분류"),
 							fieldWithPath("masterAuth.masterAuth").type(JsonFieldType.BOOLEAN).description("최종 관리자 권한 여부").optional(),
 							fieldWithPath("masterAuth.teamNameAuth").type(JsonFieldType.BOOLEAN).description("팀 이름 변경 권한 여부").optional(),

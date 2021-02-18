@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iso.logus.domain.team.dto.TeamDto;
+import com.iso.logus.domain.team.service.TeamSearchService;
 import com.iso.logus.domain.team.service.TeamService;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -28,13 +29,14 @@ import lombok.RequiredArgsConstructor;
 public class TeamController {
 
 	private final TeamService teamService;
+	private final TeamSearchService teamSearchService;
 	
 	@GetMapping
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
 	})
 	public List<TeamDto.Response> findList() {
-		return teamService.findList();
+		return teamSearchService.findList();
 	}
 	
 	@GetMapping(value = "/{name}")
@@ -42,7 +44,7 @@ public class TeamController {
 		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
 	})
 	public List<TeamDto.Response> findByName(@PathVariable String name) {
-		return teamService.findByName(name);
+		return teamSearchService.findByName(name);
 	}
 	
 	@PostMapping

@@ -30,23 +30,42 @@ import com.iso.logus.ControllerTest;
 import com.iso.logus.domain.team.domain.team.Team;
 import com.iso.logus.domain.team.domain.team.TeamRepository;
 import com.iso.logus.domain.team.dto.TeamDto;
+import com.iso.logus.domain.team.service.TeamSearchService;
 import com.iso.logus.domain.team.service.TeamService;
+import com.iso.logus.domain.user.domain.User;
+import com.iso.logus.domain.user.domain.UserRepository;
+import com.iso.logus.domain.user.dto.UserDto;
 
 public class TeamControllerTest extends ControllerTest {
 	
 	@MockBean
 	private TeamService teamService;
 	
+	@MockBean
+	private TeamSearchService teamSearchService;
+	
 	@Autowired
 	private TeamRepository teamRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	int TEAM_NUM = 0;
 	
 	private Team team1, team2;
+	private User masterUser;
 	
 	@BeforeEach
 	public void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentationContextProvider) {
 		setUpMockMvc(webApplicationContext, restDocumentationContextProvider);
+		
+		masterUser = UserDto.SignUpRequest.builder()
+							.uid("master")
+							.name("master")
+							.password("password")
+							.build()
+							.toEntity();
+		userRepository.save(masterUser);
 		
 		team1 = createRequestBuilder().toEntity();
 		team2 = createRequestBuilder().toEntity();
@@ -60,7 +79,7 @@ public class TeamControllerTest extends ControllerTest {
 		List<TeamDto.Response> dtoList = new ArrayList<>();
 		dtoList.add(new TeamDto.Response(team1));
 		dtoList.add(new TeamDto.Response(team2));
-		given(teamService.findList()).willReturn(dtoList);
+		given(teamSearchService.findList()).willReturn(dtoList);
 		
 		//when
 		ResultActions result = mockMvc.perform(get("/api/team")
@@ -86,7 +105,7 @@ public class TeamControllerTest extends ControllerTest {
 		//given
 		List<TeamDto.Response> dtoList = new ArrayList<>();
 		dtoList.add(new TeamDto.Response(team1));
-		given(teamService.findByName("testTeam1")).willReturn(dtoList);
+		given(teamSearchService.findByName("testTeam1")).willReturn(dtoList);
 		
 		//when
 		ResultActions result = mockMvc.perform(get("/api/team/testTeam1")

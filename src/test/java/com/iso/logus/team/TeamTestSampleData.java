@@ -14,13 +14,17 @@ import com.iso.logus.domain.team.dto.TeamDto;
 @Component
 public class TeamTestSampleData {
 	
-	public Team makeTeam() {
-		Team team = TeamDto.CreateRequest.builder()
+	public TeamDto.CreateRequest makeTeamRequest() {
+		return TeamDto.CreateRequest.builder()
 				.name("testTeam")
 				.descript("sample")
-				.build().toEntity();
-		return team;
+				.build();
 	}
+	
+	public Team makeTeam() {
+		return makeTeamRequest().toEntity();
+	}
+	
 	public Team makeTeam(long mockTeamId) {
 		Team team = makeTeam();
 		team.setIdForTest(mockTeamId);
@@ -38,6 +42,7 @@ public class TeamTestSampleData {
 		memberControllTrueAuth.makeAllTrue();
 		activeTrueAuth.makeAllTrue();
 		return TeamAuthDto.SaveRequest.builder()
+						.teamId(team.getId())
 						.name(name)
 						.masterAuth(masterTrueAuth)
 						.memberControllAuth(memberControllTrueAuth)
@@ -58,6 +63,7 @@ public class TeamTestSampleData {
 		memberControllFalseAuth.makeAllFalse();
 		activeFalseAuth.makeAllFalse();
 		return TeamAuthDto.SaveRequest.builder()
+						.teamId(team.getId())
 						.name(name)
 						.masterAuth(masterFalseAuth)
 						.memberControllAuth(memberControllFalseAuth)
@@ -84,6 +90,7 @@ public class TeamTestSampleData {
 		ActiveAuth activeCustomAuth = ActiveAuth.builder()
 				.build();
 		return TeamAuthDto.SaveRequest.builder()
+						.teamId(team.getId())
 						.name(name)
 						.masterAuth(masterCustomAuth)
 						.memberControllAuth(memberControllCustomAuth)
@@ -92,7 +99,7 @@ public class TeamTestSampleData {
 						.toEntity(team);
 	}
 	
-	public TeamAuthDto.SaveRequest saveRequestBuilder() {
+	public TeamAuthDto.SaveRequest saveRequestBuilder(long teamId) {
 		MasterAuth masterAuth = MasterAuth.builder()
 				.masterAuth(false)
 				.teamNameAuth(false)
@@ -106,6 +113,7 @@ public class TeamTestSampleData {
 		ActiveAuth activeAuth = ActiveAuth.builder()
 				.build();
 		TeamAuthDto.SaveRequest saveRequst = TeamAuthDto.SaveRequest.builder()
+				.teamId(teamId)
 				.name("new-class")
 				.masterAuth(masterAuth)
 				.memberControllAuth(memberControllAuth)
@@ -114,7 +122,7 @@ public class TeamTestSampleData {
 		return saveRequst;
 	}
 	
-	public TeamAuthDto.UpdateRequest updateRequestBuilder(String name, TeamAuthType type) {
+	public TeamAuthDto.UpdateRequest updateRequestBuilder(long teamId, String originName, String changeName, TeamAuthType type) {
 		MasterAuth masterAuth = MasterAuth.builder()
 				.masterAuth(false)
 				.teamNameAuth(false)
@@ -128,7 +136,9 @@ public class TeamTestSampleData {
 		ActiveAuth activeAuth = ActiveAuth.builder()
 				.build();
 		TeamAuthDto.UpdateRequest updateRequest = TeamAuthDto.UpdateRequest.builder()
-				.name(name)
+				.teamId(teamId)
+				.originName(originName)
+				.changeName(changeName)
 				.type(type)
 				.masterAuth(masterAuth)
 				.memberControllAuth(memberControllAuth)
@@ -137,7 +147,7 @@ public class TeamTestSampleData {
 		return updateRequest;
 	}
 		
-	public TeamAuthDto.UpdateRequest updateMasterBuilder(String name, TeamAuthType type) {
+	public TeamAuthDto.UpdateRequest updateMasterBuilder(long teamId, String originName, String changeName, TeamAuthType type) {
 		MasterAuth masterAuth = MasterAuth.builder()
 				.masterAuth(true)
 				.teamNameAuth(true)
@@ -151,7 +161,9 @@ public class TeamTestSampleData {
 		ActiveAuth activeAuth = ActiveAuth.builder()
 				.build();
 		TeamAuthDto.UpdateRequest updateRequest = TeamAuthDto.UpdateRequest.builder()
-				.name(name)
+				.teamId(teamId)
+				.originName(originName)
+				.changeName(changeName)
 				.type(type)
 				.masterAuth(masterAuth)
 				.memberControllAuth(memberControllAuth)

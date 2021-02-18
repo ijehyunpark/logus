@@ -12,20 +12,28 @@ import com.iso.logus.domain.team.dto.TeamAuthDto;
 
 @Component
 public class TeamAuthBaseData {
-	public TeamAuth createMasterAuth(Team team) {
-		MasterAuth masterAuth = new MasterAuth();
+	
+	MasterAuth masterAuth = new MasterAuth();
+	MemberControllAuth memberControllAuth = new MemberControllAuth();
+	ActiveAuth activeAuth = new ActiveAuth();
+	
+	public TeamAuthDto.SaveRequest createMasterAuthSaveRequest(long teamId) {
 		masterAuth.makeAllTrue();
-		MemberControllAuth memberControllAuth = new MemberControllAuth();
 		memberControllAuth.makeAllTrue();
-		ActiveAuth activeAuth = new ActiveAuth();
 		activeAuth.makeAllTrue();
-		TeamAuth teamAuth = TeamAuthDto.SaveRequest.builder()
+		return TeamAuthDto.SaveRequest.builder()
+					.teamId(teamId)
 					.name("Team Master")
-					.build()
-					.toEntity(team);
+					.build();
+	}
+	
+	public TeamAuth createMasterAuth(Team team) {
+		TeamAuth teamAuth = createMasterAuthSaveRequest(team.getId()).toEntity(team);
 		
 		teamAuth.update(TeamAuthDto.UpdateRequest.builder()
-					.name("Team Master")
+					.teamId(team.getId())
+					.originName("Team Master")
+					.changeName("Team Master")
 					.type(TeamAuthType.MASTER)
 					.masterAuth(masterAuth)
 					.memberControllAuth(memberControllAuth)
@@ -34,20 +42,23 @@ public class TeamAuthBaseData {
 		return teamAuth;
 	}
 	
-	public TeamAuth createDefaultAuth(Team team) {
-		MasterAuth masterAuth = new MasterAuth();
+	public TeamAuthDto.SaveRequest createDefaultAuthSaveRequest(long teamId) {
 		masterAuth.makeAllFalse();
-		MemberControllAuth memberControllAuth = new MemberControllAuth();
 		memberControllAuth.makeAllFalse();
-		ActiveAuth activeAuth = new ActiveAuth();
 		activeAuth.makeAllFalse();
-		TeamAuth teamAuth = TeamAuthDto.SaveRequest.builder()
+		return TeamAuthDto.SaveRequest.builder()
+					.teamId(teamId)
 					.name("Member")
-					.build()
-					.toEntity(team);
+					.build();
+	}
+	
+	public TeamAuth createDefaultAuth(Team team) {
+		TeamAuth teamAuth = createDefaultAuthSaveRequest(team.getId()).toEntity(team);
 		
 		teamAuth.update(TeamAuthDto.UpdateRequest.builder()
-					.name("Member")
+					.teamId(team.getId())
+					.originName("Member")
+					.changeName("Member")
 					.type(TeamAuthType.DEFAULT)
 					.masterAuth(masterAuth)
 					.memberControllAuth(memberControllAuth)

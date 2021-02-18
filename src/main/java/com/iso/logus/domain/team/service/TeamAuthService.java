@@ -21,7 +21,6 @@ import com.iso.logus.domain.team.exception.TeamNotFoundException;
 import com.iso.logus.global.exception.ServerErrorException;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
@@ -30,7 +29,7 @@ public class TeamAuthService {
 
 	private final TeamAuthRepository teamAuthRepository;
 
-	private final TeamService teamService;
+	private final TeamSearchService teamSearchService;
 
 	@Transactional(readOnly = true)
 	public List<TeamAuth> findTeamAuthList(long teamId) {
@@ -59,15 +58,15 @@ public class TeamAuthService {
 		return teamAuthRepository.findByTeamIdAndName(teamId, name).orElseThrow(TeamAuthNotFoundException::new);
 	}
 
-	public TeamAuth createTeamAuth(long teamId, SaveRequest saveRequest) {
-		if(isExistedTeamAuth(teamId, saveRequest.getName()))
+	public TeamAuth createTeamAuth(SaveRequest saveRequest) {
+		if(isExistedTeamAuth(saveRequest.getTeamId(), saveRequest.getName()))
 			throw new TeamAuthNameDuplicationException();
-		Team team = teamService.findTeamById(teamId);
+		Team team = teamSearchService.findTeamById(saveRequest.getTeamId());
 		return teamAuthRepository.save(saveRequest.toEntity(team));
 	}
 
-	public TeamAuth changeTeamAuth(long teamId, String name, UpdateRequest updateRequest) {
-		TeamAuth teamAuth = findTeamAuthByTeamIdName(teamId, name);
+	public TeamAuth changeTeamAuth(UpdateRequest updateRequest) {
+		TeamAuth teamAuth = findTeamAuthByTeamIdName(updateRequest.getTeamId(), updateRequest.getOriginName());
 		if(masterAuthCheck(teamAuth, updateRequest))
 			throw new TeamAuthMasterAuthException();
 		defaultAuthCheck(teamAuth, updateRequest);
@@ -106,7 +105,9 @@ public class TeamAuthService {
 			updateRequest.getType() == TeamAuthType.DEFAULT) {
 			TeamAuth originDefaultAuth = findDefaultAuth(teamAuth.getTeam().getId());
 			UpdateRequest originUpdateRequest = UpdateRequest.builder()
-					.name(originDefaultAuth.getName())
+					.teamId(teamAuth.getTeam().getId())
+					.originName(originDefaultAuth.getName())
+					.changeName(originDefaultAuth.getName())
 					.type(TeamAuthType.NONE)
 					.masterAuth(originDefaultAuth.getMasterAuth())
 					.memberControllAuth(originDefaultAuth.getMemberControllAuth())

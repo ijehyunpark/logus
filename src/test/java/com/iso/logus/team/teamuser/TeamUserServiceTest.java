@@ -39,7 +39,7 @@ import com.iso.logus.domain.team.dto.TeamUserDto.TeamResponse;
 import com.iso.logus.domain.team.exception.TeamNotFoundException;
 import com.iso.logus.domain.team.service.TeamAuthBaseData;
 import com.iso.logus.domain.team.service.TeamAuthService;
-import com.iso.logus.domain.team.service.TeamService;
+import com.iso.logus.domain.team.service.TeamSearchService;
 import com.iso.logus.domain.team.service.TeamUserService;
 import com.iso.logus.domain.user.domain.User;
 import com.iso.logus.domain.user.dto.UserDto;
@@ -57,7 +57,7 @@ public class TeamUserServiceTest {
 	@Mock
 	private TeamUserRepository teamUserRepository;
 	@Mock
-	private TeamService teamService;
+	private TeamSearchService teamSearchService;
 	@Mock
 	private UserService userService;
 	@Mock
@@ -178,7 +178,7 @@ public class TeamUserServiceTest {
 				.teamId(team.getId())
 				.uid(user3.getUid())
 				.build();
-		given(teamService.findTeamById(team.getId())).willReturn(team);
+		given(teamSearchService.findTeamById(team.getId())).willReturn(team);
 		given(userService.findUserByUid(user3.getUid())).willReturn(user3);
 		given(teamAuthService.findDefaultAuth(team.getId())).willReturn(defaultAuth);
 		

@@ -37,21 +37,21 @@ public class TeamAuthController {
 		return teamAuthService.findList(teamId);
 	}
 	
-	@PostMapping(value = "/{team_id}")
+	@PostMapping
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
 	})
 	@ResponseStatus(code = HttpStatus.CREATED)
-	public void createTeamAuth(@PathVariable("team_id") long teamId, @Valid @RequestBody TeamAuthDto.SaveRequest saveRequest) {
-		teamAuthService.createTeamAuth(teamId, saveRequest);
+	public void createTeamAuth(@Valid @RequestBody TeamAuthDto.SaveRequest saveRequest) {
+		teamAuthService.createTeamAuth(saveRequest);
 	}
 	
-	@PutMapping(value = "/{team_id}/{name}")
+	@PutMapping
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
 	})
-	public void changeTeamAuth(@PathVariable("team_id") long teamId, @PathVariable String name, @Valid @RequestBody TeamAuthDto.UpdateRequest updateRequest) {
-		teamAuthService.changeTeamAuth(teamId, name, updateRequest);
+	public void changeTeamAuth(@Valid @RequestBody TeamAuthDto.UpdateRequest updateRequest) {
+		teamAuthService.changeTeamAuth(updateRequest);
 	}
 	
 	@DeleteMapping(value = "/{team_id}/{name}")

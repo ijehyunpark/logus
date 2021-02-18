@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.iso.logus.domain.team.domain.team.Team;
 import com.iso.logus.domain.team.domain.teamauth.TeamAuth;
 import com.iso.logus.domain.team.domain.teamauth.TeamAuthType;

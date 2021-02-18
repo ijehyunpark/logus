@@ -59,7 +59,7 @@ public class TeamAuth {
 	}
 	
 	public void update(TeamAuthDto.UpdateRequest updateRequest) {
-		this.name = updateRequest.getName();
+		this.name = updateRequest.getChangeName();
 		this.type = updateRequest.getType().getTeamAuthTypeValue();
 		this.masterAuth = updateRequest.getMasterAuth();
 		this.memberControllAuth = updateRequest.getMemberControllAuth();
