@@ -1,6 +1,8 @@
 package com.iso.logus.domain.team.controller;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -12,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.iso.logus.domain.team.domain.teamauth.AuthType;
 import com.iso.logus.domain.team.dto.TeamUserDto;
 import com.iso.logus.domain.team.service.TeamUserService;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -25,11 +30,19 @@ public class TeamUserController {
 	private final TeamUserService teamUserService;
 	
 	/* Search */
-	@GetMapping(value = "/find/member/{team_id}")
-	public List<TeamUserDto.MemberResponse> findAllMemberByTeam(@PathVariable long team_id) {
-		return teamUserService.findAllMemberByTeam(team_id);
+	@ApiImplicitParams({@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")})
+	@GetMapping(value = "/auth-test/{teamId}/{uid}/{authType}")
+	public Map<String, Boolean> isUserHasAuth(@PathVariable long teamId, @PathVariable String uid, @PathVariable AuthType authType) {
+		return Collections.singletonMap("value", teamUserService.isUserHasAuth(teamId, uid, authType));
 	}
 	
+	@ApiImplicitParams({@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")})
+	@GetMapping(value = "/find/member/{teamId}")
+	public List<TeamUserDto.MemberResponse> findAllMemberByTeam(@PathVariable long teamId) {
+		return teamUserService.findAllMemberByTeam(teamId);
+	}
+	
+	@ApiImplicitParams({@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")})
 	@GetMapping(value = "/find/team/{uid}")
 	public List<TeamUserDto.TeamResponse> findAllTeamByUser(@PathVariable String uid) {
 		return teamUserService.findAllTeamByUser(uid);

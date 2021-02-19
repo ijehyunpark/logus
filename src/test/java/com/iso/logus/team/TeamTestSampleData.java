@@ -35,9 +35,9 @@ public class TeamTestSampleData {
 		return returnAllTrueAuth(team, "allTrueAuth");
 	}
 	public TeamAuth returnAllTrueAuth(Team team, String name) {
-		MasterAuth masterTrueAuth = MasterAuth.builder().build();
-		MemberControllAuth memberControllTrueAuth = MemberControllAuth.builder().build();
-		ActiveAuth activeTrueAuth = ActiveAuth.builder().build();
+		MasterAuth masterTrueAuth = new MasterAuth();
+		MemberControllAuth memberControllTrueAuth = new MemberControllAuth();
+		ActiveAuth activeTrueAuth = new ActiveAuth();
 		masterTrueAuth.makeAllTrue();
 		memberControllTrueAuth.makeAllTrue();
 		activeTrueAuth.makeAllTrue();
@@ -56,9 +56,9 @@ public class TeamTestSampleData {
 	}
 	
 	public TeamAuth returnAllFalseAuth(Team team, String name) {
-		MasterAuth masterFalseAuth = MasterAuth.builder().build();
-		MemberControllAuth memberControllFalseAuth = MemberControllAuth.builder().build();
-		ActiveAuth activeFalseAuth = ActiveAuth.builder().build();
+		MasterAuth masterFalseAuth = new MasterAuth();
+		MemberControllAuth memberControllFalseAuth = new MemberControllAuth();
+		ActiveAuth activeFalseAuth = new ActiveAuth();
 		masterFalseAuth.makeAllFalse();
 		memberControllFalseAuth.makeAllFalse();
 		activeFalseAuth.makeAllFalse();
@@ -78,7 +78,6 @@ public class TeamTestSampleData {
 	
 	public TeamAuth returnSampleAuth(Team team, String name) {
 		MasterAuth masterCustomAuth = MasterAuth.builder()
-				.masterAuth(false)
 				.teamNameAuth(true)
 				.authManageAuth(false)
 				.build();
@@ -101,7 +100,6 @@ public class TeamTestSampleData {
 	
 	public TeamAuthDto.SaveRequest saveRequestBuilder(long teamId) {
 		MasterAuth masterAuth = MasterAuth.builder()
-				.masterAuth(false)
 				.teamNameAuth(false)
 				.authManageAuth(false)
 				.build();
@@ -124,7 +122,6 @@ public class TeamTestSampleData {
 	
 	public TeamAuthDto.UpdateRequest updateRequestBuilder(long teamId, String originName, String changeName, TeamAuthType type) {
 		MasterAuth masterAuth = MasterAuth.builder()
-				.masterAuth(false)
 				.teamNameAuth(false)
 				.authManageAuth(false)
 				.build();
@@ -148,18 +145,12 @@ public class TeamTestSampleData {
 	}
 		
 	public TeamAuthDto.UpdateRequest updateMasterBuilder(long teamId, String originName, String changeName, TeamAuthType type) {
-		MasterAuth masterAuth = MasterAuth.builder()
-				.masterAuth(true)
-				.teamNameAuth(true)
-				.authManageAuth(true)
-				.build();
-		MemberControllAuth memberControllAuth = MemberControllAuth.builder()
-				.inviteAuth(true)
-				.inviteAcceptAuth(true)
-				.quitAuth(true)
-				.build();
-		ActiveAuth activeAuth = ActiveAuth.builder()
-				.build();
+		MasterAuth masterAuth = new MasterAuth();
+		masterAuth.makeAllTrue();
+		MemberControllAuth memberControllAuth = new MemberControllAuth();
+		memberControllAuth.makeAllTrue();
+		ActiveAuth activeAuth = new ActiveAuth();
+		activeAuth.makeAllTrue();
 		TeamAuthDto.UpdateRequest updateRequest = TeamAuthDto.UpdateRequest.builder()
 				.teamId(teamId)
 				.originName(originName)

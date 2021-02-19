@@ -3,6 +3,7 @@ package com.iso.logus.domain.team.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +31,9 @@ public class TeamAuthService {
 	private final TeamAuthRepository teamAuthRepository;
 
 	private final TeamSearchService teamSearchService;
-
+	
+	private static final TeamAuthBaseData baseData = new TeamAuthBaseData();
+		
 	@Transactional(readOnly = true)
 	public List<TeamAuth> findTeamAuthList(long teamId) {
 		List<TeamAuth> teamAuthList = teamAuthRepository.findByTeamId(teamId);
@@ -64,6 +67,12 @@ public class TeamAuthService {
 		Team team = teamSearchService.findTeamById(saveRequest.getTeamId());
 		return teamAuthRepository.save(saveRequest.toEntity(team));
 	}
+	
+	public Pair<TeamAuth,TeamAuth> setUpTeamAuth(Team team) {
+		TeamAuth masterAuth = teamAuthRepository.save(baseData.createMasterAuth(team));
+		TeamAuth defaultAuth = teamAuthRepository.save(baseData.createDefaultAuth(team));
+		return Pair.of(masterAuth, defaultAuth);
+	}
 
 	public TeamAuth changeTeamAuth(UpdateRequest updateRequest) {
 		TeamAuth teamAuth = findTeamAuthByTeamIdName(updateRequest.getTeamId(), updateRequest.getOriginName());
@@ -82,8 +91,8 @@ public class TeamAuthService {
 	}
 	
 	@Transactional(readOnly = true)
-	public TeamAuth findDefaultAuth(long team_id) {
-		return teamAuthRepository.findByTeamIdAndTypeEqual(team_id, TeamAuthType.DEFAULT.getTeamAuthTypeValue()).orElseThrow(ServerErrorException::new);
+	public TeamAuth findDefaultAuth(long teamId) {
+		return teamAuthRepository.findByTeamIdAndTypeEqual(teamId, TeamAuthType.DEFAULT.getTeamAuthTypeValue()).orElseThrow(ServerErrorException::new);
 	}
 	
 	public boolean masterAuthCheck(TeamAuth teamAuth, UpdateRequest updateRequest) {
@@ -116,4 +125,5 @@ public class TeamAuthService {
 			originDefaultAuth.update(originUpdateRequest);
 		}
 	}
+
 }

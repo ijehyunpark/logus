@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.iso.logus.domain.team.domain.team.Team;
 
@@ -17,6 +18,6 @@ public interface TeamAuthRepository extends JpaRepository<TeamAuth, Long>{
 	
 	boolean existsByTeamIdAndName(long id, String name);
 	
-	@Query(value = "SELECT t FROM TeamAuth t WHERE t.id = id AND t.type = type")
-	Optional<TeamAuth> findByTeamIdAndTypeEqual(long id, int type);
+	@Query(value = "SELECT t FROM TeamAuth t WHERE t.team.id = :team_id AND t.type = :type")
+	Optional<TeamAuth> findByTeamIdAndTypeEqual(@Param("team_id") long teamId, @Param("type") int type);
 }

@@ -1,5 +1,7 @@
 package com.iso.logus.domain.team.service;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.iso.logus.domain.team.domain.team.Team;
+import com.iso.logus.domain.team.domain.teamauth.AuthType;
+import com.iso.logus.domain.team.domain.teamauth.DetailAuth;
 import com.iso.logus.domain.team.domain.teamauth.TeamAuth;
 import com.iso.logus.domain.team.domain.teamuser.TeamUser;
 import com.iso.logus.domain.team.domain.teamuser.TeamUserRepository;
@@ -17,6 +21,7 @@ import com.iso.logus.domain.team.exception.TeamNotFoundException;
 import com.iso.logus.domain.user.domain.User;
 import com.iso.logus.domain.user.exception.UserNotFoundException;
 import com.iso.logus.domain.user.service.UserService;
+import com.iso.logus.global.exception.ServerErrorException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,17 +35,39 @@ public class TeamUserService {
 	private final UserService userService;
 	private final TeamAuthService teamAuthService;
 	
+	public boolean compareAuth(TeamAuth teamAuth, AuthType type) {
+		try {
+			/* TeamAuth의 DetailAuth에 대한 class getter 가져오기 */
+			String getClassMethodName = "get" + type.getAuthClassName();
+			Method getClassMethod = teamAuth.getClass().getMethod(getClassMethodName);
+			DetailAuth detailAuth = (DetailAuth) getClassMethod.invoke(teamAuth);
+			
+			/* DetailAuth의 특정 필드의 getter 가져오기 */
+			String getFieldMethodName = "is" + type.getAuthType().substring(0,1).toUpperCase() + type.getAuthType().substring(1);
+			Method getFieldMethod = detailAuth.getClass().getMethod(getFieldMethodName);
+			return (boolean) getFieldMethod.invoke(detailAuth);
+		} catch (IllegalArgumentException | IllegalAccessException | SecurityException | NoSuchMethodException | InvocationTargetException e) {
+			throw new ServerErrorException();
+		}
+	}
+	
 	@Transactional(readOnly = true)
-	public List<TeamUser> findAllTeamUserByTeam(long team_id) {
-		List<TeamUser> result = teamUserRepository.findAllByTeamId(team_id);
-		if(result.isEmpty())
+	public boolean isUserHasAuth(long teamId, String uid, AuthType authType) {
+		TeamUser teamUser = findTeamUserByTeamIdAndUserId(teamId, uid);
+		return compareAuth(teamUser.getTeamAuth(), authType);
+	}
+	
+	@Transactional(readOnly = true)
+	public List<TeamUser> findAllTeamUserByTeam(long teamId) {
+		if(!teamSearchService.isExistsTeamById(teamId))
 			throw new TeamNotFoundException();
+		List<TeamUser> result = teamUserRepository.findAllByTeamId(teamId);
 		return result;
 	}
 	
 	@Transactional(readOnly = true)
-	public List<MemberResponse> findAllMemberByTeam(long team_id) {
-		List<TeamUser> teamUserList = findAllTeamUserByTeam(team_id);
+	public List<MemberResponse> findAllMemberByTeam(long teamId) {
+		List<TeamUser> teamUserList = findAllTeamUserByTeam(teamId);
 		List<MemberResponse> dtoList = new ArrayList<>();
 		for(TeamUser teamUser : teamUserList) 
 			dtoList.add(new MemberResponse(teamUser));
@@ -49,9 +76,9 @@ public class TeamUserService {
 	
 	@Transactional(readOnly = true)
 	public List<TeamUser> findAllTeamUserByUser(String uid) {
-		List<TeamUser> result = teamUserRepository.findAllByUserUid(uid);
-		if(result.isEmpty())
+		if(!userService.isExistedUid(uid))
 			throw new UserNotFoundException();
+		List<TeamUser> result = teamUserRepository.findAllByUserUid(uid);
 		return result;
 	}
 	
@@ -65,8 +92,8 @@ public class TeamUserService {
 	}
 	
 	@Transactional(readOnly = true)
-	public TeamUser findTeamUserByTeamIdAndUserId(long team_id, String uid) {
-		return teamUserRepository.findByTeamIdAndUserUid(team_id, uid).orElseThrow(UserNotFoundException::new);
+	public TeamUser findTeamUserByTeamIdAndUserId(long teamId, String uid) {
+		return teamUserRepository.findByTeamIdAndUserUid(teamId, uid).orElseThrow(UserNotFoundException::new);
 	}
 	
 	public TeamUser joinNewMember(TeamUserDto.JoinRequest joinRequest) {

@@ -2,9 +2,8 @@ package com.iso.logus.global.exception;
 
 import com.iso.logus.global.error.ErrorCode;
 
-import lombok.NoArgsConstructor;
-
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @SuppressWarnings("serial")
 @Getter

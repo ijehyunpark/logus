@@ -21,6 +21,7 @@ import com.iso.logus.domain.user.exception.UserNotFoundException;
 import com.iso.logus.domain.user.exception.WrongPasswordException;
 import com.iso.logus.global.exception.AccessDeniedException;
 import com.iso.logus.global.exception.CustomException;
+import com.iso.logus.global.exception.ServerErrorException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,6 +64,12 @@ public class ErrorExceptionHandler {
 	@ExceptionHandler(value = {PasswordFailedExceededException.class})
 	@ResponseStatus(HttpStatus.TOO_MANY_REQUESTS) //429_ERROR
 	protected ErrorResponse handleTooManyRequestsException(CustomException e) {
+		return build(e.getErrorCode(), e);
+	}
+	
+	@ExceptionHandler(value = {ServerErrorException.class})
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) //500_ERROR
+	protected ErrorResponse handleInternalServerError(CustomException e) {
 		return build(e.getErrorCode(), e);
 	}
 	

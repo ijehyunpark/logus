@@ -3,7 +3,6 @@ package com.iso.logus.domain.team.domain.teamauth;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,44 +11,44 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class MasterAuth implements DetailAuth {
-	@Column(name = "master_auth", columnDefinition = "tinyint(1) not null default false comment '최종 관리자 권한'")
-	private boolean masterAuth;
-	
 	@Column(name = "team_name_auth", columnDefinition = "tinyint(1) not null default false comment '팀 이름 변경 권한'")
 	private boolean teamNameAuth;
 	
 	@Column(name = "auth_manage_auth", columnDefinition = "tinyint(1) not null default false comment '팀 권한 관리 권한'")
 	private boolean authManageAuth;
 	
-//	@Column(name = "log_master_auth", columnDefinition = "tinyint(1) not null default false comment '모든 로그 조작 권한'")
-//	private boolean logMasterAuth;
+	@Column(name = "log_master_auth", columnDefinition = "tinyint(1) not null default false comment '모든 로그 조작 권한'")
+	private boolean logMasterAuth;
 	
-//	@Column(name = "calendar_master_auth", columnDefinition = "tinyint(1) not null default false comment '모든 캘린더 조작 권한'")
-//	private boolean calendarMasterAuth;
+	@Column(name = "calendar_master_auth", columnDefinition = "tinyint(1) not null default false comment '모든 캘린더 조작 권한'")
+	private boolean calendarMasterAuth;
 	
 	@Builder
-	public MasterAuth(boolean masterAuth, boolean teamNameAuth, boolean authManageAuth) {
-		this.masterAuth = masterAuth;
+	public MasterAuth(boolean teamNameAuth, boolean authManageAuth, boolean logMasterAuth, boolean calendarMasterAuth) {
 		this.teamNameAuth = teamNameAuth;
 		this.authManageAuth = authManageAuth;
+		this.logMasterAuth = logMasterAuth;
+		this.calendarMasterAuth = calendarMasterAuth;
 	}
 	
 	@Override
 	public void makeAllTrue() {
-		this.masterAuth = true;
 		this.teamNameAuth = true;
 		this.authManageAuth = true;
+		this.logMasterAuth = true;
+		this.calendarMasterAuth = true;
 	}
 
 	@Override
 	public void makeAllFalse() {
-		this.masterAuth = false;
 		this.teamNameAuth = false;
 		this.authManageAuth = false;
+		this.logMasterAuth = false;
+		this.calendarMasterAuth = false;
 	}
 
 	@Override
 	public boolean checkAllTrue() {
-		return masterAuth && teamNameAuth && authManageAuth;
+		return teamNameAuth && authManageAuth && logMasterAuth && calendarMasterAuth;
 	}
 }

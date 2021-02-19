@@ -220,7 +220,7 @@ public class UserServiceTest {
 		
 		//when
 		assertThrows(WrongPasswordException.class, () -> {
-			String resultToken = userService.signIn(signInRequest);
+			userService.signIn(signInRequest);
 		});
 		
 		//then
@@ -238,7 +238,7 @@ public class UserServiceTest {
 		
 		//when
 		assertThrows(WrongPasswordException.class, () -> {
-			String resultToken = userService.signIn(signInRequest);
+			userService.signIn(signInRequest);
 		});
 		
 		//then

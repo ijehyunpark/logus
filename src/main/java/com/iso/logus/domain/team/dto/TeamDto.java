@@ -53,11 +53,13 @@ public class TeamDto {
 	
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
-	public static class ChangeDescriptRequest {
+	public static class UpdateRequest {
+		private String name;
 		private String descript;
 		
 		@Builder
-		public ChangeDescriptRequest(String descript) {
+		public UpdateRequest(String name, String descript) {
+			this.name = name;
 			this.descript = descript;
 		}
 	}

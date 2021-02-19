@@ -15,7 +15,6 @@ import org.hibernate.annotations.DynamicUpdate;
 import com.iso.logus.domain.team.domain.team.Team;
 import com.iso.logus.domain.team.dto.TeamAuthDto;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

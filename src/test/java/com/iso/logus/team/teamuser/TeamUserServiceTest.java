@@ -5,6 +5,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -26,6 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.iso.logus.domain.team.domain.team.Team;
+import com.iso.logus.domain.team.domain.teamauth.AuthType;
 import com.iso.logus.domain.team.domain.teamauth.TeamAuth;
 import com.iso.logus.domain.team.domain.teamuser.TeamUser;
 import com.iso.logus.domain.team.domain.teamuser.TeamUserRepository;
@@ -108,6 +110,20 @@ public class TeamUserServiceTest {
 	}
 	
 	@Test
+	@DisplayName("isUserHasAuth: 해당 유저가 특정 팀의 특정 권한을 가지고 있는지 검사")
+	public void isUserHasAuthTest() {
+		//given
+		given(teamUserRepository.findByTeamIdAndUserUid(masterTeamUser.getTeam().getId(), masterTeamUser.getUser().getUid())).willReturn(Optional.of(masterTeamUser));
+		
+		//when
+		boolean result = teamUserService.isUserHasAuth(masterTeamUser.getTeam().getId(), masterTeamUser.getUser().getUid(), AuthType.authManageAuth);
+
+		//then
+		assertNotNull(result);
+		assertTrue(result);
+	}
+	
+	@Test
 	@DisplayName("findAllMemberByTeamTest: 특정 팀에 소속된 모든 유저 조회")
 	public void findAllMemberByTeamTest() {
 		//given
@@ -115,6 +131,7 @@ public class TeamUserServiceTest {
 		teamUserList.add(masterTeamUser);
 		teamUserList.add(teamUser1);
 		teamUserList.add(teamUser2);
+		given(teamSearchService.isExistsTeamById(anyLong())).willReturn(true);
 		given(teamUserRepository.findAllByTeamId(anyLong())).willReturn(teamUserList);
 		
 		//when
@@ -129,7 +146,7 @@ public class TeamUserServiceTest {
 	@DisplayName("findAllMemberByTeamTest: 존재하지 않은 팀으로 조회 요청")
 	public void findAllMemberByTeamTest_TeamNotFound() {
 		//given
-		given(teamUserRepository.findAllByTeamId(anyLong())).willReturn(List.of());
+		given(teamSearchService.isExistsTeamById(anyLong())).willReturn(false);
 		
 		//when
 		assertThrows(TeamNotFoundException.class, () -> {
@@ -146,6 +163,7 @@ public class TeamUserServiceTest {
 		//given
 		List<TeamUser> teamUserList = new ArrayList<>();
 		teamUserList.add(teamUser1);
+		given(userService.isExistedUid(anyString())).willReturn(true);
 		given(teamUserRepository.findAllByUserUid(anyString())).willReturn(teamUserList);
 		
 		//when
@@ -160,7 +178,7 @@ public class TeamUserServiceTest {
 	@DisplayName("findAllTeamByUserTest: 존재하지 않은 유저로 조회 요청")
 	public void findAllTeamByUserTest_UserNotFound() {
 		//given
-		given(teamUserRepository.findAllByUserUid(anyString())).willReturn(List.of());
+		given(userService.isExistedUid(anyString())).willReturn(false);
 		
 		//when
 		assertThrows(UserNotFoundException.class, () -> {

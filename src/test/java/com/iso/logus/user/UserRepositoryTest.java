@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.iso.logus.domain.user.domain.Password;
 import com.iso.logus.domain.user.domain.User;
 import com.iso.logus.domain.user.domain.UserRepository;
 import com.iso.logus.domain.user.dto.UserDto;

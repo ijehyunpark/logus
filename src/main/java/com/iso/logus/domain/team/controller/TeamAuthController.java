@@ -29,11 +29,11 @@ public class TeamAuthController {
 	
 	private final TeamAuthService teamAuthService;
 
-	@GetMapping(value = "/{team_id}")
+	@GetMapping(value = "/{teamId}")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
 	})
-	public List<TeamAuthDto.Response> findTeamAuthList(@PathVariable("team_id") long teamId) {
+	public List<TeamAuthDto.Response> findTeamAuthList(@PathVariable long teamId) {
 		return teamAuthService.findList(teamId);
 	}
 	
@@ -54,11 +54,11 @@ public class TeamAuthController {
 		teamAuthService.changeTeamAuth(updateRequest);
 	}
 	
-	@DeleteMapping(value = "/{team_id}/{name}")
+	@DeleteMapping(value = "/{teamId}/{authName}")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
 	})
-	public void deleteTeamAuth(@PathVariable("team_id") long teamId, @PathVariable String name) {
-		teamAuthService.deleteTeamAuth(teamId,name);
+	public void deleteTeamAuth(@PathVariable long teamId, @PathVariable String authName) {
+		teamAuthService.deleteTeamAuth(teamId, authName);
 	}
 }

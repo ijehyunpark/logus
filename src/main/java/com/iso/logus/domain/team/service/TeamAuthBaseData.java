@@ -13,57 +13,65 @@ import com.iso.logus.domain.team.dto.TeamAuthDto;
 @Component
 public class TeamAuthBaseData {
 	
-	MasterAuth masterAuth = new MasterAuth();
-	MemberControllAuth memberControllAuth = new MemberControllAuth();
-	ActiveAuth activeAuth = new ActiveAuth();
-	
 	public TeamAuthDto.SaveRequest createMasterAuthSaveRequest(long teamId) {
-		masterAuth.makeAllTrue();
-		memberControllAuth.makeAllTrue();
-		activeAuth.makeAllTrue();
 		return TeamAuthDto.SaveRequest.builder()
 					.teamId(teamId)
 					.name("Team Master")
 					.build();
 	}
 	
+	public TeamAuthDto.UpdateRequest createMasterAuthUpdateRequest(long teamId) {
+		MasterAuth masterAuth = new MasterAuth();
+		MemberControllAuth memberControllAuth = new MemberControllAuth();
+		ActiveAuth activeAuth = new ActiveAuth();
+		masterAuth.makeAllTrue();
+		memberControllAuth.makeAllTrue();
+		activeAuth.makeAllTrue();
+		return TeamAuthDto.UpdateRequest.builder()
+			.teamId(teamId)
+			.originName("Team Master")
+			.changeName("Team Master")
+			.type(TeamAuthType.MASTER)
+			.masterAuth(masterAuth)
+			.memberControllAuth(memberControllAuth)
+			.activeAuth(activeAuth)
+			.build();
+	}
+	
 	public TeamAuth createMasterAuth(Team team) {
 		TeamAuth teamAuth = createMasterAuthSaveRequest(team.getId()).toEntity(team);
-		
-		teamAuth.update(TeamAuthDto.UpdateRequest.builder()
-					.teamId(team.getId())
-					.originName("Team Master")
-					.changeName("Team Master")
-					.type(TeamAuthType.MASTER)
-					.masterAuth(masterAuth)
-					.memberControllAuth(memberControllAuth)
-					.activeAuth(activeAuth)
-					.build());
+		teamAuth.update(createMasterAuthUpdateRequest(team.getId()));
 		return teamAuth;
 	}
 	
 	public TeamAuthDto.SaveRequest createDefaultAuthSaveRequest(long teamId) {
-		masterAuth.makeAllFalse();
-		memberControllAuth.makeAllFalse();
-		activeAuth.makeAllFalse();
 		return TeamAuthDto.SaveRequest.builder()
 					.teamId(teamId)
 					.name("Member")
 					.build();
 	}
 	
-	public TeamAuth createDefaultAuth(Team team) {
-		TeamAuth teamAuth = createDefaultAuthSaveRequest(team.getId()).toEntity(team);
-		
-		teamAuth.update(TeamAuthDto.UpdateRequest.builder()
-					.teamId(team.getId())
+	public TeamAuthDto.UpdateRequest createDefaultAuthUpdateRequest(long teamId) {
+		MasterAuth masterAuth = new MasterAuth();
+		MemberControllAuth memberControllAuth = new MemberControllAuth();
+		ActiveAuth activeAuth = new ActiveAuth();
+		masterAuth.makeAllFalse();
+		memberControllAuth.makeAllFalse();
+		activeAuth.makeAllFalse();
+		return TeamAuthDto.UpdateRequest.builder()
+					.teamId(teamId)
 					.originName("Member")
 					.changeName("Member")
 					.type(TeamAuthType.DEFAULT)
 					.masterAuth(masterAuth)
 					.memberControllAuth(memberControllAuth)
 					.activeAuth(activeAuth)
-					.build());
+					.build();
+	}
+	
+	public TeamAuth createDefaultAuth(Team team) {
+		TeamAuth teamAuth = createDefaultAuthSaveRequest(team.getId()).toEntity(team);
+		teamAuth.update(createDefaultAuthUpdateRequest(team.getId()));
 		return teamAuth;
 	}
 }

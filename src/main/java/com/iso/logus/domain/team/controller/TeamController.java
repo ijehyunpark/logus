@@ -56,12 +56,12 @@ public class TeamController {
 		teamService.createTeam(createRequest);
 	}
 	
-	@PatchMapping(value = "/descript/{id}")
+	@PatchMapping(value = "/{id}")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
 	})
-	public void changeTeamDescript(@PathVariable long id, @Valid @RequestBody TeamDto.ChangeDescriptRequest changeDescriptRequest) {
-		teamService.changeTeamDescript(id, changeDescriptRequest);
+	public void updateTeam(@PathVariable long id, @Valid @RequestBody TeamDto.UpdateRequest UudateRequest) {
+		teamService.updateTeam(id, UudateRequest);
 	}
 	
 	@DeleteMapping(value = "/{id}")

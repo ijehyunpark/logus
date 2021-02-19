@@ -151,23 +151,25 @@ public class TeamControllerTest extends ControllerTest {
 	}
 	
 	@Test
-	public void changeTeamDescriptTest() throws Exception {
+	public void changeTeamTest() throws Exception {
 		//given
-		TeamDto.ChangeDescriptRequest changeDescriptRequest = TeamDto.ChangeDescriptRequest.builder()
-																							.descript("changed descipt")
-																							.build();
+		TeamDto.UpdateRequest updateRequest = TeamDto.UpdateRequest.builder()
+																	.name("changed name")
+																	.descript("changed descipt")
+																	.build();
 		
 		//when
-		ResultActions result = mockMvc.perform(patch("/api/team/descript/1")
-				.content(objectMapper.writeValueAsString(changeDescriptRequest))
+		ResultActions result = mockMvc.perform(patch("/api/team/1")
+				.content(objectMapper.writeValueAsString(updateRequest))
 				.contentType(MediaType.APPLICATION_JSON));
 		
 		//then
 		result.andExpect(status().isOk())
-				.andDo(document("team-changeTeamDescript",
+				.andDo(document("team-changeTeam",
 						ApiDocumentUtils.getDocumentRequest(),
 						ApiDocumentUtils.getDocumentResponse(),
 						requestFields(
+							fieldWithPath("name").type(JsonFieldType.STRING).description("팀 이름"),
 							fieldWithPath("descript").type(JsonFieldType.STRING).description("팀 설명")
 							)
 						));

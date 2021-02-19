@@ -69,21 +69,44 @@ public class TeamServiceTest {
 	}
 	
 	@Test
-	@DisplayName("changeTeamDescript: 팀 설명 변경 테스트")
-	public void changeTeamDescriptTest() {
+	@DisplayName("changeTeam: 팀 설정 변경 테스트")
+	public void changeTeamTest() {
 		//given
-		TeamDto.ChangeDescriptRequest changeDescriptRequest = TeamDto.ChangeDescriptRequest.builder()
+		TeamDto.UpdateRequest updateRequest = TeamDto.UpdateRequest.builder()
+				.name("changed team name")
 				.descript("changed descript")
 				.build();
 		given(teamSearchService.findTeamById(anyLong())).willReturn(team);
 		
 		//when
-		Team result = teamService.changeTeamDescript(anyLong(), changeDescriptRequest);
+		Team result = teamService.updateTeam(anyLong(), updateRequest);
 		
 		//then
 		assertNotNull(result);
 		assertEquals(team, result);
-		assertThat(result.getDescript(), is(changeDescriptRequest.getDescript()));
+		assertThat(result.getName(), is(updateRequest.getName()));
+		assertThat(result.getDescript(), is(updateRequest.getDescript()));
+		
+	}
+	
+	@Test
+	@DisplayName("changeTeam: 팀 설명 변경 테스트, 빈 값은 원래 값 유지")
+	public void changeTeamDescriptTest() {
+		//given
+		TeamDto.UpdateRequest updateRequest = TeamDto.UpdateRequest.builder()
+				.descript("changed descript")
+				.build();
+		String originName = team.getName();
+		given(teamSearchService.findTeamById(anyLong())).willReturn(team);
+		
+		//when
+		Team result = teamService.updateTeam(anyLong(), updateRequest);
+		
+		//then
+		assertNotNull(result);
+		assertEquals(team, result);
+		assertThat(result.getName(), is(originName));
+		assertThat(result.getDescript(), is(updateRequest.getDescript()));
 		
 	}
 	

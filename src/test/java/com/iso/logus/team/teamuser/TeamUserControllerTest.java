@@ -27,6 +27,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.iso.logus.ApiDocumentUtils;
 import com.iso.logus.ControllerTest;
 import com.iso.logus.domain.team.domain.team.Team;
+import com.iso.logus.domain.team.domain.teamauth.AuthType;
 import com.iso.logus.domain.team.domain.teamauth.TeamAuth;
 import com.iso.logus.domain.team.domain.teamuser.TeamUser;
 import com.iso.logus.domain.team.dto.TeamUserDto;
@@ -84,6 +85,26 @@ public class TeamUserControllerTest extends ControllerTest {
 								.uid(user2.getUid())
 								.build()
 								.toEntity(team, user2, defaultAuth);
+	}
+	
+	@Test
+	public void findTeamUserAuthTest() throws Exception {
+		//given
+		given(teamUserService.isUserHasAuth(0, "anyString", AuthType.authManageAuth)).willReturn(true);
+		
+		//when
+		ResultActions result = mockMvc.perform(get("/api/team/member/auth-test/0/anyString/authManageAuth")
+				.accept(MediaType.APPLICATION_JSON));
+		
+		//then
+		result.andExpect(status().isOk())
+				.andDo(document("teamUser-isUserHasAuth",
+						ApiDocumentUtils.getDocumentRequest(),
+						ApiDocumentUtils.getDocumentResponse(),
+						responseFields(
+								fieldWithPath("value").description("권한 여부")
+							)
+						));
 	}
 	
 	@Test

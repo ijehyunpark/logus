@@ -2,6 +2,7 @@ package com.iso.logus.domain.team.domain.team;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -48,8 +49,11 @@ public class Team extends TimeEntity {
 		this.descript = descript;
 	}
 	
-	public void changeDescript(TeamDto.ChangeDescriptRequest changeDescriptRequest) {
-		this.descript = changeDescriptRequest.getDescript();
+	public void update(TeamDto.UpdateRequest updateRequest) {
+		Optional<String> updateName = Optional.ofNullable(updateRequest.getName());
+		this.name = updateName.orElse(this.name);
+		Optional<String> updateDescript = Optional.ofNullable(updateRequest.getDescript());
+		this.descript = updateDescript.orElse(this.descript);
 	}
 	
 	public void setIdForTest(long mockId) {

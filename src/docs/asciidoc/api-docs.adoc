@@ -166,19 +166,19 @@ include::{snippets}/team-createTeam/http-request.adoc[]
 ===== Response HTTP Example
 include::{snippets}/team-createTeam/http-response.adoc[]
 
-=== 팀 설명 변경
-Patch /api/team/descript/{id}
+=== 팀 설정 변경
+Patch /api/team/{id}
 
 ==== Request
-include::{snippets}/team-changeTeamDescript/request-fields.adoc[]
+include::{snippets}/team-changeTeam/request-fields.adoc[]
 
 ==== Request HTTP Example
-include::{snippets}/team-changeTeamDescript/http-request.adoc[]
+include::{snippets}/team-changeTeam/http-request.adoc[]
 
 ==== Response
 
 ===== Response HTTP Example
-include::{snippets}/team-changeTeamDescript/http-response.adoc[]
+include::{snippets}/team-changeTeam/http-response.adoc[]
 
 === 팀 삭제
 Delete /api/team/{id}
@@ -335,3 +335,17 @@ include::{snippets}/teamUser-changeAuth/http-request.adoc[]
 
 ==== Response HTTP Example
 include::{snippets}/teamUser-changeAuth/http-request.adoc[]
+
+=== 특정 유저가 해당 팀에서 특정 권한을 가지고 있는지 검사
+Get /api/team/member/auth-test/{teamId}/{uid}/{authType}    
+
+==== Request
+
+==== Request HTTP Example
+include::{snippets}teamUser-isUserHasAuth/http-request.adoc[]  
+
+==== Response
+include::{snippets}teamUser-isUserHasAuth/request-fields.adoc[]
+
+==== Response HTTP Example
+include::{snippets}teamUser-isUserHasAuth/http-request.adoc[]

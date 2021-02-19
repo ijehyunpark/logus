@@ -18,18 +18,17 @@ public class TeamService {
 	private final TeamRepository teamRepository;
 	private final TeamAuthService teamAuthService;
 	
-	private static final TeamAuthBaseData baseData = new TeamAuthBaseData();
+
 	
 	public Team createTeam(TeamDto.CreateRequest createRequest) {
 		Team team = teamRepository.save(createRequest.toEntity());
-		teamAuthService.createTeamAuth(baseData.createMasterAuthSaveRequest(team.getId()));
-		teamAuthService.createTeamAuth(baseData.createDefaultAuthSaveRequest(team.getId()));
+		teamAuthService.setUpTeamAuth(team);
 		return team;
 	}
 
-	public Team changeTeamDescript(long id, TeamDto.ChangeDescriptRequest changeDescriptRequest) {
+	public Team updateTeam(long id, TeamDto.UpdateRequest updateRequest) {
 		Team team = teamSearchService.findTeamById(id);
-		team.changeDescript(changeDescriptRequest);
+		team.update(updateRequest);
 		return team;
 	}
 	

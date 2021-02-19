@@ -26,7 +26,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.iso.logus.ApiDocumentUtils;
 import com.iso.logus.ControllerTest;
-import com.iso.logus.domain.user.domain.Password;
 import com.iso.logus.domain.user.domain.User;
 import com.iso.logus.domain.user.dto.UserDto;
 import com.iso.logus.domain.user.service.UserService;

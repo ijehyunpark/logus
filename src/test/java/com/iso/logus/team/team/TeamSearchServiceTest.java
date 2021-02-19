@@ -154,7 +154,7 @@ public class TeamSearchServiceTest {
 	}
 	
 	@Test
-	@DisplayName("findTeamById: 특정 id를 가진 team 반환 테스트_실패패")
+	@DisplayName("findTeamById: 특정 id를 가진 team 반환 테스트_실패")
 	public void findTeamByIdTest_fail() {
 		//given
 		given(teamRepository.findById(anyLong())).willReturn(Optional.empty());
@@ -165,6 +165,20 @@ public class TeamSearchServiceTest {
 		});
 		
 		//then
+	}
+	
+	@Test
+	@DisplayName("isExistsTeamById: 특정 id를 가진 team이 존재하는지 반환")
+	public void isExistsTeamByIdTest() {
+		//given
+		given(teamRepository.existsById(anyLong())).willReturn(true);
+		
+		//when
+		boolean result = teamSearchService.isExistsTeamById(anyLong());
+		
+		//then
+		assertThat(result,is(true));
+		
 	}
 	
 	public List<Team> sameNameTeamListBuilder() {

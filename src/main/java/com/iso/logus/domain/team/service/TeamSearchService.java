@@ -46,4 +46,8 @@ public class TeamSearchService {
 	public Team findTeamById(long id) {
 		return teamRepository.findById(id).orElseThrow(TeamNotFoundException::new);
 	}
+	
+	public boolean isExistsTeamById(long id) {
+		return teamRepository.existsById(id);
+	}
 }
