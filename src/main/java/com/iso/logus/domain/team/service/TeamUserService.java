@@ -12,6 +12,7 @@ import com.iso.logus.domain.team.domain.team.Team;
 import com.iso.logus.domain.team.domain.teamauth.AuthType;
 import com.iso.logus.domain.team.domain.teamauth.DetailAuth;
 import com.iso.logus.domain.team.domain.teamauth.TeamAuth;
+import com.iso.logus.domain.team.domain.teamauth.TeamAuthType;
 import com.iso.logus.domain.team.domain.teamuser.TeamUser;
 import com.iso.logus.domain.team.domain.teamuser.TeamUserRepository;
 import com.iso.logus.domain.team.dto.TeamUserDto;
@@ -55,6 +56,24 @@ public class TeamUserService {
 	public boolean isUserHasAuth(long teamId, String uid, AuthType authType) {
 		TeamUser teamUser = findTeamUserByTeamIdAndUserId(teamId, uid);
 		return compareAuth(teamUser.getTeamAuth(), authType);
+	}
+	
+	public TeamUser findMemberHasMasterAuth(long teamId) {
+		List<TeamUser> tu = teamUserRepository.findByTeamAuthType(teamId, TeamAuthType.MASTER.getTeamAuthTypeValue());
+		if(tu.size() == 1)
+			return tu.get(0);
+		
+		if(tu.size() == 0)
+			throw new TeamNotFoundException();
+		else
+			throw new ServerErrorException();
+		
+	}
+	
+	@Transactional(readOnly = true)
+	public boolean isUserHasMasterAuth(long teamId, String uid) {
+		TeamUser teamUser = findMemberHasMasterAuth(teamId);
+		return teamUser.getUser().getUid() == uid;
 	}
 	
 	@Transactional(readOnly = true)

@@ -30,15 +30,20 @@ import org.springframework.web.context.WebApplicationContext;
 import com.iso.logus.ApiDocumentUtils;
 import com.iso.logus.ControllerTest;
 import com.iso.logus.domain.team.domain.team.Team;
+import com.iso.logus.domain.team.domain.teamauth.AuthType;
 import com.iso.logus.domain.team.domain.teamauth.TeamAuthType;
 import com.iso.logus.domain.team.dto.TeamAuthDto;
 import com.iso.logus.domain.team.service.TeamAuthService;
+import com.iso.logus.domain.team.service.TeamUserService;
 import com.iso.logus.team.TeamTestSampleData;
 
 public class TeamAuthControllerTest extends ControllerTest {
 	
 	@MockBean
 	private TeamAuthService teamAuthService;
+	
+	@MockBean 
+	private TeamUserService teamUserService;
 	
 	@Autowired
 	private TeamTestSampleData sampleData;
@@ -92,12 +97,16 @@ public class TeamAuthControllerTest extends ControllerTest {
 	@Test
 	public void createTeamAuthTest() throws Exception {
 		//given
+		String token = jwtTokenProvider.createToken("uid");
+		
+		given(teamUserService.isUserHasAuth(1L, "uid", AuthType.authManageAuth)).willReturn(true);
 		TeamAuthDto.SaveRequest saveRequest = sampleData.saveRequestBuilder(1);
 		
 		//when
 		ResultActions result = mockMvc.perform(post("/api/team/auth")
 										.content(objectMapper.writeValueAsString(saveRequest))
-										.contentType(MediaType.APPLICATION_JSON));
+										.contentType(MediaType.APPLICATION_JSON)
+										.header("X-AUTH-TOKEN", token));
 		
 		//then
 		result.andExpect(status().isCreated())
@@ -126,12 +135,16 @@ public class TeamAuthControllerTest extends ControllerTest {
 	@Test
 	public void changeTeamAuthTest() throws Exception {
 		//given
+		String token = jwtTokenProvider.createToken("uid");
+		
+		given(teamUserService.isUserHasAuth(1L, "uid", AuthType.authManageAuth)).willReturn(true);
 		TeamAuthDto.UpdateRequest updateRequest = sampleData.updateRequestBuilder(1, "anyString", "changed auth name", TeamAuthType.NONE);
 		
 		//when
 		ResultActions result = mockMvc.perform(put("/api/team/auth")
 				.content(objectMapper.writeValueAsString(updateRequest))
-				.contentType(MediaType.APPLICATION_JSON));
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("X-AUTH-TOKEN", token));
 		
 		//then
 		result.andExpect(status().isOk())
@@ -161,9 +174,13 @@ public class TeamAuthControllerTest extends ControllerTest {
 	@Test
 	public void deleteTeamAuthTest() throws Exception {
 		//given
+		String token = jwtTokenProvider.createToken("uid");
+		
+		given(teamUserService.isUserHasAuth(1L, "uid", AuthType.authManageAuth)).willReturn(true);
 		
 		//when
-		ResultActions result = mockMvc.perform(delete("/api/team/auth/1/anyString"));
+		ResultActions result = mockMvc.perform(delete("/api/team/auth/1/anyString")
+										.header("X-AUTH-TOKEN", token));
 		
 		//then
 		result.andExpect(status().isOk())

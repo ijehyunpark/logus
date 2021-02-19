@@ -3,6 +3,7 @@ package com.iso.logus.team.teamuser;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,6 +30,7 @@ import org.springframework.test.context.ActiveProfiles;
 import com.iso.logus.domain.team.domain.team.Team;
 import com.iso.logus.domain.team.domain.teamauth.AuthType;
 import com.iso.logus.domain.team.domain.teamauth.TeamAuth;
+import com.iso.logus.domain.team.domain.teamauth.TeamAuthType;
 import com.iso.logus.domain.team.domain.teamuser.TeamUser;
 import com.iso.logus.domain.team.domain.teamuser.TeamUserRepository;
 import com.iso.logus.domain.team.dto.TeamUserDto;
@@ -121,6 +123,32 @@ public class TeamUserServiceTest {
 		//then
 		assertNotNull(result);
 		assertTrue(result);
+	}
+	
+	@Test
+	@DisplayName("findMemberHasMasterAuth: 해당 유자의 권한이 최종 관리자인지 검사")
+	public void findMemberHasMasterAuthTest() {
+		//given
+		given(teamUserRepository.findByTeamAuthType(masterTeamUser.getTeam().getId(), TeamAuthType.MASTER.getTeamAuthTypeValue())).willReturn(List.of(masterTeamUser));
+		
+		//when
+		boolean result = teamUserService.isUserHasMasterAuth(masterTeamUser.getTeam().getId(), masterTeamUser.getUser().getUid());
+		
+		//then
+		assertTrue(result);
+	}
+	
+	@Test
+	@DisplayName("findMemberHasMasterAuth: 해당 유자의 권한이 최종 관리자인지 검사, 다른 유저일 경우")
+	public void findMemberHasMasterAuthTest_WrongUid() {
+		//given
+		given(teamUserRepository.findByTeamAuthType(masterTeamUser.getTeam().getId(), TeamAuthType.MASTER.getTeamAuthTypeValue())).willReturn(List.of(masterTeamUser));
+		
+		//when
+		boolean result = teamUserService.isUserHasMasterAuth(masterTeamUser.getTeam().getId(), "wrongString");
+		
+		//then
+		assertFalse(result);
 	}
 	
 	@Test

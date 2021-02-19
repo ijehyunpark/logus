@@ -191,6 +191,10 @@ public class TeamUserControllerTest extends ControllerTest {
 	@Test
 	public void quitMember() throws Exception {
 		//given
+		String token = jwtTokenProvider.createToken("uid");
+		
+		given(teamUserService.isUserHasMasterAuth(1L, "uid")).willReturn(true);
+		
 		TeamUserDto.QuitRequest quitRequest = TeamUserDto.QuitRequest.builder()
 				.teamId(team.getId())
 				.uid(user3.getUid())
@@ -199,7 +203,8 @@ public class TeamUserControllerTest extends ControllerTest {
 		//when
 		ResultActions result = mockMvc.perform(post("/api/team/member/quit")
 									.content(objectMapper.writeValueAsString(quitRequest))
-									.contentType(MediaType.APPLICATION_JSON));
+									.contentType(MediaType.APPLICATION_JSON)
+									.header("X-AUTH-TOKEN", token));
 		
 		//then
 		result.andExpect(status().isOk())
@@ -216,6 +221,10 @@ public class TeamUserControllerTest extends ControllerTest {
 	@Test
 	public void changeAuthTest() throws Exception {
 		//given
+		String token = jwtTokenProvider.createToken("uid");
+		
+		given(teamUserService.isUserHasAuth(1L, "uid", AuthType.authManageAuth)).willReturn(true);
+		
 		TeamUserDto.ChangeAuthRequest changeAuthRequest = TeamUserDto.ChangeAuthRequest.builder()
 				.teamId(team.getId())
 				.uid(user1.getUid())
@@ -225,8 +234,9 @@ public class TeamUserControllerTest extends ControllerTest {
 		//when
 		ResultActions result = mockMvc.perform(patch("/api/team/member/auth")
 									.content(objectMapper.writeValueAsString(changeAuthRequest))
-									.contentType(MediaType.APPLICATION_JSON));
-		
+									.contentType(MediaType.APPLICATION_JSON)
+									.header("X-AUTH-TOKEN", token));
+									
 		//then
 		result.andExpect(status().isOk())
 				.andDo(document("teamUser-changeAuth",

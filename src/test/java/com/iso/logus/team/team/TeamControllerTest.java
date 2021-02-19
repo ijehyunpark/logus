@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,9 +30,11 @@ import com.iso.logus.ApiDocumentUtils;
 import com.iso.logus.ControllerTest;
 import com.iso.logus.domain.team.domain.team.Team;
 import com.iso.logus.domain.team.domain.team.TeamRepository;
+import com.iso.logus.domain.team.domain.teamauth.AuthType;
 import com.iso.logus.domain.team.dto.TeamDto;
 import com.iso.logus.domain.team.service.TeamSearchService;
 import com.iso.logus.domain.team.service.TeamService;
+import com.iso.logus.domain.team.service.TeamUserService;
 import com.iso.logus.domain.user.domain.User;
 import com.iso.logus.domain.user.domain.UserRepository;
 import com.iso.logus.domain.user.dto.UserDto;
@@ -43,6 +46,9 @@ public class TeamControllerTest extends ControllerTest {
 	
 	@MockBean
 	private TeamSearchService teamSearchService;
+	
+	@MockBean 
+	private TeamUserService teamUserService;
 	
 	@Autowired
 	private TeamRepository teamRepository;
@@ -153,6 +159,9 @@ public class TeamControllerTest extends ControllerTest {
 	@Test
 	public void changeTeamTest() throws Exception {
 		//given
+		String token = jwtTokenProvider.createToken("uid");
+		
+		given(teamUserService.isUserHasAuth(1L, "uid", AuthType.teamNameAuth)).willReturn(true);
 		TeamDto.UpdateRequest updateRequest = TeamDto.UpdateRequest.builder()
 																	.name("changed name")
 																	.descript("changed descipt")
@@ -161,7 +170,8 @@ public class TeamControllerTest extends ControllerTest {
 		//when
 		ResultActions result = mockMvc.perform(patch("/api/team/1")
 				.content(objectMapper.writeValueAsString(updateRequest))
-				.contentType(MediaType.APPLICATION_JSON));
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("X-AUTH-TOKEN", token));
 		
 		//then
 		result.andExpect(status().isOk())
@@ -176,11 +186,41 @@ public class TeamControllerTest extends ControllerTest {
 	};
 	
 	@Test
+	@DisplayName("권한이 없는 유저가 팀 설정 변경 시도")
+	public void changeTeamTest_NoAuthUser() throws Exception {
+		//given
+		String token = jwtTokenProvider.createToken("uid");
+		
+		given(teamUserService.isUserHasMasterAuth(1L, "uid")).willReturn(false);
+		TeamDto.UpdateRequest updateRequest = TeamDto.UpdateRequest.builder()
+																.name("changed name")
+																.descript("changed descipt")
+																.build();
+	
+		//when
+		ResultActions result = mockMvc.perform(patch("/api/team/1")
+				.content(objectMapper.writeValueAsString(updateRequest))
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("X-AUTH-TOKEN", token));
+		
+		//then
+		result.andExpect(status().isUnauthorized());
+//				.andDo(document("team-changeTeam@002",
+//						ApiDocumentUtils.getDocumentRequest(),
+//						ApiDocumentUtils.getDocumentResponse(),
+//						));
+	}
+	
+	@Test
 	public void deleteTeamTest() throws Exception {
 		//given
+		String token = jwtTokenProvider.createToken("uid");
+		
+		given(teamUserService.isUserHasMasterAuth(1L, "uid")).willReturn(true);
 		
 		//when
-		ResultActions result = mockMvc.perform(delete("/api/team/1"));
+		ResultActions result = mockMvc.perform(delete("/api/team/1")
+										.header("X-AUTH-TOKEN", token));
 		
 		//then
 		result.andExpect(status().isOk())
@@ -188,6 +228,26 @@ public class TeamControllerTest extends ControllerTest {
 						ApiDocumentUtils.getDocumentRequest(),
 						ApiDocumentUtils.getDocumentResponse()
 						));	
+	}
+	
+	@Test
+	@DisplayName("권한이 없는 유저가 팀 삭제 시도")
+	public void deleteTeamTest_NoAuthUser() throws Exception {
+		//given
+		String token = jwtTokenProvider.createToken("uid");
+		
+		given(teamUserService.isUserHasMasterAuth(1L, "uid")).willReturn(false);
+		
+		//when
+		ResultActions result = mockMvc.perform(delete("/api/team/1")
+										.header("X-AUTH-TOKEN", token));
+		
+		//then
+		result.andExpect(status().isUnauthorized());
+//				.andDo(document("team-deleteTeam-@001",
+//						ApiDocumentUtils.getDocumentRequest(),
+//						ApiDocumentUtils.getDocumentResponse()
+//						));	
 	}
 	
 	private TeamDto.CreateRequest createRequestBuilder() {
