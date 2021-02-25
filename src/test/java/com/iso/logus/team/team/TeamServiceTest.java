@@ -6,12 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.iso.logus.domain.team.domain.team.Team;
 import com.iso.logus.domain.team.domain.team.TeamRepository;
@@ -26,6 +28,7 @@ import com.iso.logus.domain.team.dto.TeamDto;
 import com.iso.logus.domain.team.service.TeamAuthService;
 import com.iso.logus.domain.team.service.TeamSearchService;
 import com.iso.logus.domain.team.service.TeamService;
+import com.iso.logus.domain.team.service.TeamUserService;
 import com.iso.logus.team.TeamTestSampleData;
 
 @ActiveProfiles("test")
@@ -44,25 +47,30 @@ public class TeamServiceTest {
 	@Mock
 	private TeamAuthService teamAuthService;
 	
-	private static Team team;
+	@Mock
+	private TeamUserService teamUserService;
 	
-	private static final TeamTestSampleData sampleData = new TeamTestSampleData();
+	private Team team;
 	
-	@BeforeAll
-	public static void setUp() {
-		team = sampleData.makeTeam();
+	private final TeamTestSampleData teamSampleData = new TeamTestSampleData();
+	
+	@BeforeEach
+	public void setUp() {
+		team = teamSampleData.makeTeam();
 	}
 	
 	@Test
 	@DisplayName("createTeam: 팀 생성 테스트")
 	public void createTeamTest() {
 		//given
-		TeamDto.CreateRequest createRequest = sampleData.makeTeamRequest();
-		Team testTeam = sampleData.makeTeam(1L);
+		TeamDto.CreateRequest createRequest = teamSampleData.makeTeamRequest();
+		Team testTeam = createRequest.toEntity();
+		long mockTeamId = 0L;
+		ReflectionTestUtils.setField(testTeam, "id", mockTeamId);
 		given(teamRepository.save(any(Team.class))).willReturn(testTeam);
 		
 		//when
-		teamService.createTeam(createRequest);
+		teamService.createTeam(createRequest, anyString());
 		
 		//then
 		verify(teamRepository, atLeastOnce()).save(any(Team.class));

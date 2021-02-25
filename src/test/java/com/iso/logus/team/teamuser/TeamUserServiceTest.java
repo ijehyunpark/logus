@@ -118,7 +118,7 @@ public class TeamUserServiceTest {
 		given(teamUserRepository.findByTeamIdAndUserUid(masterTeamUser.getTeam().getId(), masterTeamUser.getUser().getUid())).willReturn(Optional.of(masterTeamUser));
 		
 		//when
-		boolean result = teamUserService.isUserHasAuth(masterTeamUser.getTeam().getId(), masterTeamUser.getUser().getUid(), AuthType.authManageAuth);
+		boolean result = teamUserService.isUserHasAuth(masterTeamUser.getTeam().getId(), masterTeamUser.getUser().getUid(), AuthType.authmanageauth);
 
 		//then
 		assertNotNull(result);

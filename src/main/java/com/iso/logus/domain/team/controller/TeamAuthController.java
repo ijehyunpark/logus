@@ -51,7 +51,7 @@ public class TeamAuthController {
 	public void createTeamAuth(@Valid @RequestBody TeamAuthDto.SaveRequest saveRequest, HttpServletRequest request) {
 		String token = jwtTokenProvider.resolveToken(request);
 		String requestUid = jwtTokenProvider.getUserPk(token);
-		if(!teamUserService.isUserHasAuth(saveRequest.getTeamId(), requestUid, AuthType.authManageAuth))
+		if(!teamUserService.isUserHasAuth(saveRequest.getTeamId(), requestUid, AuthType.authmanageauth))
 			throw new AccessDeniedException();
 		teamAuthService.createTeamAuth(saveRequest);
 	}
@@ -63,7 +63,7 @@ public class TeamAuthController {
 	public void changeTeamAuth(@Valid @RequestBody TeamAuthDto.UpdateRequest updateRequest, HttpServletRequest request) {
 		String token = jwtTokenProvider.resolveToken(request);
 		String requestUid = jwtTokenProvider.getUserPk(token);
-		if(!teamUserService.isUserHasAuth(updateRequest.getTeamId(), requestUid, AuthType.authManageAuth))
+		if(!teamUserService.isUserHasAuth(updateRequest.getTeamId(), requestUid, AuthType.authmanageauth))
 			throw new AccessDeniedException();
 		teamAuthService.changeTeamAuth(updateRequest);
 	}
@@ -75,7 +75,7 @@ public class TeamAuthController {
 	public void deleteTeamAuth(@PathVariable long teamId, @PathVariable String authName, HttpServletRequest request) {
 		String token = jwtTokenProvider.resolveToken(request);
 		String requestUid = jwtTokenProvider.getUserPk(token);
-		if(!teamUserService.isUserHasAuth(teamId, requestUid, AuthType.authManageAuth))
+		if(!teamUserService.isUserHasAuth(teamId, requestUid, AuthType.authmanageauth))
 			throw new AccessDeniedException();
 		teamAuthService.deleteTeamAuth(teamId, authName);
 	}

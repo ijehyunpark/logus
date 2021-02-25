@@ -34,15 +34,16 @@ import com.iso.logus.domain.team.dto.TeamUserDto;
 import com.iso.logus.domain.team.service.TeamAuthBaseData;
 import com.iso.logus.domain.team.service.TeamUserService;
 import com.iso.logus.domain.user.domain.User;
-import com.iso.logus.domain.user.dto.UserDto;
 import com.iso.logus.team.TeamTestSampleData;
+import com.iso.logus.user.UserTestSampleData;
 
 public class TeamUserControllerTest extends ControllerTest {
 
 	@MockBean
 	private TeamUserService teamUserService;
 	
-	private TeamTestSampleData sampleData = new TeamTestSampleData();
+	private TeamTestSampleData teamSampleData = new TeamTestSampleData();
+	private UserTestSampleData userSampleData = new UserTestSampleData();
 	private TeamAuthBaseData authBaseData = new TeamAuthBaseData();
 	
 	/*
@@ -50,6 +51,7 @@ public class TeamUserControllerTest extends ControllerTest {
 	 * user{1, 2}: team의 일반 유저의 예제
 	 * user{3}: team에 소속되지 않은 유저
 	 */
+	private long mockTeamId = 0L;
 	private Team team;
 	private TeamAuth masterAuth, defaultAuth;
 	private User masterUser, user1, user2, user3;
@@ -59,13 +61,13 @@ public class TeamUserControllerTest extends ControllerTest {
 	public void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentationContextProvider) {
 		setUpMockMvc(webApplicationContext, restDocumentationContextProvider);
 		
-		team = sampleData.makeTeam(1L);
+		team = teamSampleData.makeTeam(mockTeamId);
 		masterAuth = authBaseData.createMasterAuth(team);
 		defaultAuth = authBaseData.createDefaultAuth(team);
-		masterUser = userBuilder(0);
-		user1 = userBuilder(1);
-		user2 = userBuilder(2);
-		user3 = userBuilder(3);
+		masterUser = userSampleData.buildUser(0L);
+		user1 = userSampleData.buildUser(1L);
+		user2 = userSampleData.buildUser(2L);
+		user3 = userSampleData.buildUser(3L);
 		
 		masterTeamUser = TeamUserDto.JoinRequest.builder()
 								.teamId(team.getId())
@@ -90,10 +92,10 @@ public class TeamUserControllerTest extends ControllerTest {
 	@Test
 	public void findTeamUserAuthTest() throws Exception {
 		//given
-		given(teamUserService.isUserHasAuth(0, "anyString", AuthType.authManageAuth)).willReturn(true);
+		given(teamUserService.isUserHasAuth(mockTeamId, "anyString", AuthType.authmanageauth)).willReturn(true);
 		
 		//when
-		ResultActions result = mockMvc.perform(get("/api/team/member/auth-test/0/anyString/authManageAuth")
+		ResultActions result = mockMvc.perform(get("/api/team/member/auth-test/" + mockTeamId + "/anyString/authmanageauth")
 				.accept(MediaType.APPLICATION_JSON));
 		
 		//then
@@ -114,10 +116,10 @@ public class TeamUserControllerTest extends ControllerTest {
 		dtoList.add(new TeamUserDto.MemberResponse(masterTeamUser));
 		dtoList.add(new TeamUserDto.MemberResponse(teamUser1));
 		dtoList.add(new TeamUserDto.MemberResponse(teamUser2));
-		given(teamUserService.findAllMemberByTeam(1)).willReturn(dtoList);
+		given(teamUserService.findAllMemberByTeam(mockTeamId)).willReturn(dtoList);
 		
 		//when
-		ResultActions result = mockMvc.perform(get("/api/team/member/find/member/1")
+		ResultActions result = mockMvc.perform(get("/api/team/member/find/member/" + mockTeamId)
 										.accept(MediaType.APPLICATION_JSON));
 		
 		//then
@@ -148,7 +150,7 @@ public class TeamUserControllerTest extends ControllerTest {
 		
 		//then
 		result.andExpect(status().isOk())
-				.andExpect(jsonPath("$..team.id", Matchers.contains(1)))
+				.andExpect(jsonPath("$", Matchers.hasSize(1)))
 				.andDo(document("teamUser-findAllTeamByUser",
 						ApiDocumentUtils.getDocumentRequest(),
 						ApiDocumentUtils.getDocumentResponse(),
@@ -193,7 +195,7 @@ public class TeamUserControllerTest extends ControllerTest {
 		//given
 		String token = jwtTokenProvider.createToken("uid");
 		
-		given(teamUserService.isUserHasMasterAuth(1L, "uid")).willReturn(true);
+		given(teamUserService.isUserHasMasterAuth(mockTeamId, "uid")).willReturn(true);
 		
 		TeamUserDto.QuitRequest quitRequest = TeamUserDto.QuitRequest.builder()
 				.teamId(team.getId())
@@ -223,7 +225,7 @@ public class TeamUserControllerTest extends ControllerTest {
 		//given
 		String token = jwtTokenProvider.createToken("uid");
 		
-		given(teamUserService.isUserHasAuth(1L, "uid", AuthType.authManageAuth)).willReturn(true);
+		given(teamUserService.isUserHasAuth(mockTeamId, "uid", AuthType.authmanageauth)).willReturn(true);
 		
 		TeamUserDto.ChangeAuthRequest changeAuthRequest = TeamUserDto.ChangeAuthRequest.builder()
 				.teamId(team.getId())
@@ -274,14 +276,5 @@ public class TeamUserControllerTest extends ControllerTest {
 							fieldWithPath("customName").type(JsonFieldType.STRING).description("팀에서 사용할 이름").optional()
 							)
 						));
-	}
-	
-	public User userBuilder(long idNum) {
-		return UserDto.SignUpRequest.builder()
-						.uid("user" + idNum)
-						.name("user" + idNum)
-						.password("password")
-						.build()
-						.toEntity();
 	}
 }

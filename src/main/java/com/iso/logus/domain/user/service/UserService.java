@@ -45,10 +45,10 @@ public class UserService {
 		return userRepository.existsByUid(uid);
 	}
 	
-	public void SignUp(UserDto.SignUpRequest signUpRequest) {
+	public User SignUp(UserDto.SignUpRequest signUpRequest) {
 		if(isExistedUid(signUpRequest.getUid()))
 			throw new UidDuplicationException();
-		userRepository.save(signUpRequest.toEntity());
+		return userRepository.save(signUpRequest.toEntity());
 	}
 	
 	public void changeUserName(String uid, UserDto.ChangeNameRequest changeNameRequest) {
@@ -57,6 +57,7 @@ public class UserService {
 	}
 	
 	public void deleteUserByUid(String uid) {
+		/* todo: log set null, exception : masterUser */
 		User user = userRepository.findByUid(uid).orElseThrow(UserNotFoundException::new);
 		userRepository.delete(user);
 	}

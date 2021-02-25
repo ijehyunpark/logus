@@ -1,6 +1,6 @@
 package com.iso.logus.team;
 
-import org.springframework.stereotype.Component;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.iso.logus.domain.team.domain.team.Team;
 import com.iso.logus.domain.team.domain.teamauth.ActiveAuth;
@@ -11,7 +11,6 @@ import com.iso.logus.domain.team.domain.teamauth.TeamAuthType;
 import com.iso.logus.domain.team.dto.TeamAuthDto;
 import com.iso.logus.domain.team.dto.TeamDto;
 
-@Component
 public class TeamTestSampleData {
 	
 	public TeamDto.CreateRequest makeTeamRequest() {
@@ -27,7 +26,7 @@ public class TeamTestSampleData {
 	
 	public Team makeTeam(long mockTeamId) {
 		Team team = makeTeam();
-		team.setIdForTest(mockTeamId);
+		ReflectionTestUtils.setField(team, "id", mockTeamId);
 		return team;
 	}
 	

@@ -13,10 +13,22 @@ import com.iso.logus.domain.team.dto.TeamAuthDto;
 @Component
 public class TeamAuthBaseData {
 	
+	private static final String masterAuthName = "Team Master";
+	private static final String defaultAuthName = "Member";
+	
+	public static String getMasterAuthName() {
+		return masterAuthName;
+	}
+	
+	public static String getDefaultAuthName() {
+		return defaultAuthName;
+	}
+	
+	/* build masterauth */
 	public TeamAuthDto.SaveRequest createMasterAuthSaveRequest(long teamId) {
 		return TeamAuthDto.SaveRequest.builder()
 					.teamId(teamId)
-					.name("Team Master")
+					.name(masterAuthName)
 					.build();
 	}
 	
@@ -29,8 +41,8 @@ public class TeamAuthBaseData {
 		activeAuth.makeAllTrue();
 		return TeamAuthDto.UpdateRequest.builder()
 			.teamId(teamId)
-			.originName("Team Master")
-			.changeName("Team Master")
+			.originName(masterAuthName)
+			.changeName(masterAuthName)
 			.type(TeamAuthType.MASTER)
 			.masterAuth(masterAuth)
 			.memberControllAuth(memberControllAuth)
@@ -44,10 +56,12 @@ public class TeamAuthBaseData {
 		return teamAuth;
 	}
 	
+	
+	/* build default auth */
 	public TeamAuthDto.SaveRequest createDefaultAuthSaveRequest(long teamId) {
 		return TeamAuthDto.SaveRequest.builder()
 					.teamId(teamId)
-					.name("Member")
+					.name(defaultAuthName)
 					.build();
 	}
 	
@@ -60,8 +74,8 @@ public class TeamAuthBaseData {
 		activeAuth.makeAllFalse();
 		return TeamAuthDto.UpdateRequest.builder()
 					.teamId(teamId)
-					.originName("Member")
-					.changeName("Member")
+					.originName(defaultAuthName)
+					.changeName(defaultAuthName)
 					.type(TeamAuthType.DEFAULT)
 					.masterAuth(masterAuth)
 					.memberControllAuth(memberControllAuth)

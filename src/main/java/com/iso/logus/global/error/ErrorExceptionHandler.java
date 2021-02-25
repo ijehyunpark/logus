@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.iso.logus.domain.log.exception.LogNotFoundException;
 import com.iso.logus.domain.team.exception.TeamAuthMasterAuthException;
 import com.iso.logus.domain.team.exception.TeamAuthNameDuplicationException;
 import com.iso.logus.domain.team.exception.TeamNotFoundException;
@@ -49,7 +50,7 @@ public class ErrorExceptionHandler {
 		return build(e.getErrorCode(), e);
 	}
 	
-	@ExceptionHandler(value = {UserNotFoundException.class, TeamNotFoundException.class})
+	@ExceptionHandler(value = {UserNotFoundException.class, TeamNotFoundException.class, LogNotFoundException.class})
 	@ResponseStatus(HttpStatus.NOT_FOUND) //404_ERROR
 	protected ErrorResponse handleNotFoundException(CustomException e) {
 		return build(e.getErrorCode(), e);

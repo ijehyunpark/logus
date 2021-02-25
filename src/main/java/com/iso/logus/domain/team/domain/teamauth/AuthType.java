@@ -2,21 +2,21 @@ package com.iso.logus.domain.team.domain.teamauth;
 
 public enum AuthType {
 	/* master auth */
-	teamNameAuth("teamNameAuth", "MasterAuth"),
-	authManageAuth("authManageAuth", "MasterAuth"),
-	logMasterAuth("logMasterAuth", "MasterAuth"),
-	calendarMasterAuth("calendarMasterAuth", "MasterAuth"),
+	teamnameauth("teamNameAuth", "MasterAuth"),
+	authmanageauth("authManageAuth", "MasterAuth"),
+	logmasterauth("logMasterAuth", "MasterAuth"),
+	calendarmasterauth("calendarMasterAuth", "MasterAuth"),
 	
 	/* member controll auth */
-	inviteAuth("inviteAuth", "MemberControllAuth"),
-	inviteAcceptAuth("inviteAcceptAuth", "MemberControllAuth"),
-	quitAuth("quitAuth", "MemberControllAuth"),
+	inviteauth("inviteAuth", "MemberControllAuth"),
+	inviteacceptAuth("inviteAcceptAuth", "MemberControllAuth"),
+	quitauth("quitAuth", "MemberControllAuth"),
 	
 	/* active auth */
-	logWriteAuth("logWirteAuth", "ActiveAuth"),
-	replyWriteAuth("replyWriteAuth", "ActiveAuth"),
-	toDoAuth("toDoAuth", "ActiveAuth"),
-	calendarAuth("calendarAuth", "ActiveAuth");
+	logwriteauth("logWirteAuth", "ActiveAuth"),
+	replywriteauth("replyWriteAuth", "ActiveAuth"),
+	todoauth("toDoAuth", "ActiveAuth"),
+	calendarauth("calendarAuth", "ActiveAuth");
 	
 	private final String authFieldName;
 	private final String authClassName;

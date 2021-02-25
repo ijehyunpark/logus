@@ -59,8 +59,10 @@ public class TeamController {
 		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = false, dataType = "String", paramType = "header")
 	})
 	@ResponseStatus(code = HttpStatus.CREATED)
-	public void createTeam(@Valid @RequestBody TeamDto.CreateRequest createRequest) {
-		teamService.createTeam(createRequest);
+	public void createTeam(@Valid @RequestBody TeamDto.CreateRequest createRequest, HttpServletRequest request) {
+		String token = jwtTokenProvider.resolveToken(request);
+		String requestUid = jwtTokenProvider.getUserPk(token);
+		teamService.createTeam(createRequest, requestUid);
 	}
 	
 	@PatchMapping(value = "/{id}")
@@ -70,7 +72,7 @@ public class TeamController {
 	public void updateTeam(@PathVariable long id, @Valid @RequestBody TeamDto.UpdateRequest UudateRequest, HttpServletRequest request) {
 		String token = jwtTokenProvider.resolveToken(request);
 		String requestUid = jwtTokenProvider.getUserPk(token);
-		if(!teamUserService.isUserHasAuth(id, requestUid, AuthType.teamNameAuth))
+		if(!teamUserService.isUserHasAuth(id, requestUid, AuthType.teamnameauth))
 			throw new AccessDeniedException();
 		teamService.updateTeam(id, UudateRequest);
 	}

@@ -73,7 +73,7 @@ public class TeamUserController {
 	public void changeAuth(@Valid @RequestBody TeamUserDto.ChangeAuthRequest changeAuthRequest, HttpServletRequest request) {
 		String token = jwtTokenProvider.resolveToken(request);
 		String requestUid = jwtTokenProvider.getUserPk(token);
-		if(!teamUserService.isUserHasAuth(changeAuthRequest.getTeamId(), requestUid, AuthType.authManageAuth))
+		if(!teamUserService.isUserHasAuth(changeAuthRequest.getTeamId(), requestUid, AuthType.authmanageauth))
 			throw new AccessDeniedException();
 		teamUserService.changeAuth(changeAuthRequest);
 	}

@@ -25,7 +25,9 @@ import com.iso.logus.domain.user.service.UserService;
 import com.iso.logus.global.exception.ServerErrorException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -73,7 +75,8 @@ public class TeamUserService {
 	@Transactional(readOnly = true)
 	public boolean isUserHasMasterAuth(long teamId, String uid) {
 		TeamUser teamUser = findMemberHasMasterAuth(teamId);
-		return teamUser.getUser().getUid() == uid;
+		log.info("" + uid + " / " + teamUser.getUser().getUid());
+		return teamUser.getUser().getUid().equals(uid);
 	}
 	
 	@Transactional(readOnly = true)

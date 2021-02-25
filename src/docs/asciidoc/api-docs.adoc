@@ -337,7 +337,45 @@ include::{snippets}/teamUser-changeAuth/http-request.adoc[]
 include::{snippets}/teamUser-changeAuth/http-request.adoc[]
 
 === 특정 유저가 해당 팀에서 특정 권한을 가지고 있는지 검사
-Get /api/team/member/auth-test/{teamId}/{uid}/{authType}    
+Get /api/team/member/auth-test/{teamId}/{uid}/{authType}
+
+==== 권한 종류
+|===
+| 권한종류(authType) | 설명
+
+| `teamnameauth`
+| 팀이름 및 설명 수정 권한
+
+| `authmanageauth`
+| 팀내 권한 조작 관련 권한
+
+| `logmasterauth`
+| 모든 게시글 조작 권한
+
+| `calendarmasterauth`
+| 모든 캘린더 조작 권한
+
+| `inviteauth`
+| 초대 권한
+
+| `inviteacceptAuth`
+| 가입 승인 권한
+
+| `quitauth`
+| 추방 권한
+
+| `logwriteauth`
+| 게시글 작성 권한
+
+| `replywriteauth`
+| 댓글 작성 권한
+
+| `todoauth`
+| toDoList 조작 권한
+
+| `calendarauth`
+| 캘린더 조작 권한
+|===
 
 ==== Request
 
@@ -349,3 +387,105 @@ include::{snippets}teamUser-isUserHasAuth/request-fields.adoc[]
 
 ==== Response HTTP Example
 include::{snippets}teamUser-isUserHasAuth/http-request.adoc[]
+
+== 게시글(Log)
+
+=== 특정 게시글 조회
+Get /api/log/{teamId}
+
+==== Request
+
+==== Request HTTP Example
+include::{snippets}log-findLog/http-request.adoc[]
+
+==== Response
+include::{snippets}log-findLog/request-fields.adoc[]
+
+==== Response HTTP Example
+include::{snippets}log-findLog/http-request.adoc[]
+
+=== 게시글 페이지 단위 조회
+Get /api/log/page/{teamId}
+
+==== Request
+
+==== Request HTTP Example
+include::{snippets}log-findPageLog/http-request.adoc[]
+
+==== Response
+include::{snippets}log-findPageLog/request-fields.adoc[]
+
+==== Response HTTP Example
+include::{snippets}log-findPageLog/http-request.adoc[]
+
+=== 특정 키워드를 가진 게시글 페이지 단위 조회
+Get /api/log/find/{keywordType}/{teamId}/{keyword}
+
+==== 키워드 타입
+|===
+| 키워드 종류 | 설명
+
+| `titleonly`
+| 제목으로 검색
+
+| `contentonly`
+| 내용으로 검색
+
+| `titleandcontent`
+| 제목 및 내용으로 검색
+
+| `author`
+| 작성자로 검색
+|===
+
+==== Request
+
+==== Request HTTP Example
+include::{snippets}log-findPageLog/http-request.adoc[]
+
+==== Response
+include::{snippets}log-findPageLog/request-fields.adoc[]
+
+==== Response HTTP Example
+include::{snippets}log-findPageLog/http-request.adoc[]
+
+=== 새로운 게시글 작성
+Post /api/log
+
+==== Request
+include::{snippets}log-wirteLog/request-fields.adoc[]
+
+==== Request HTTP Example
+include::{snippets}log-wirteLog/http-request.adoc[]
+
+==== Response
+
+==== Response HTTP Example
+include::{snippets}log-wirteLog/http-request.adoc[]
+
+=== 특정 게시글 수정
+Patch /api/log
+
+==== Request
+include::{snippets}log-changeLog/request-fields.adoc[]
+
+==== Request HTTP Example
+include::{snippets}log-changeLog/http-request.adoc[]
+
+==== Response
+
+==== Response HTTP Example
+include::{snippets}log-changeLog/http-request.adoc[]
+
+=== 특정 게시글 삭제
+Delete /api/log/{logId}
+
+==== Request
+
+==== Request HTTP Example
+include::{snippets}log-deleteLog/http-request.adoc[]
+
+==== Response
+
+==== Response HTTP Example
+include::{snippets}log-deleteLog/http-request.adoc[]

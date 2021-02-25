@@ -137,12 +137,14 @@ public class TeamControllerTest extends ControllerTest {
 	@Test
 	public void createTeamTest() throws Exception {
 		//given
+		String token = jwtTokenProvider.createToken("uid");
 		TeamDto.CreateRequest createRequest = createRequestBuilder();
 		
 		//when
 		ResultActions result = mockMvc.perform(post("/api/team")
 										.content(objectMapper.writeValueAsString(createRequest))
-										.contentType(MediaType.APPLICATION_JSON));
+										.contentType(MediaType.APPLICATION_JSON)
+										.header("X-AUTH-TOKEN", token));
 		
 		//then
 		result.andExpect(status().isCreated())
@@ -151,7 +153,8 @@ public class TeamControllerTest extends ControllerTest {
 						ApiDocumentUtils.getDocumentResponse(),
 						requestFields(
 							fieldWithPath("name").type(JsonFieldType.STRING).description("팀 이름"),
-							fieldWithPath("descript").type(JsonFieldType.STRING).description("팀 설명")
+							fieldWithPath("descript").type(JsonFieldType.STRING).description("팀 설명").optional(),
+							fieldWithPath("customName").type(JsonFieldType.STRING).description("팀 생성자가 팀에서 사용하는 이름").optional()
 							)
 						));
 	}
@@ -161,7 +164,7 @@ public class TeamControllerTest extends ControllerTest {
 		//given
 		String token = jwtTokenProvider.createToken("uid");
 		
-		given(teamUserService.isUserHasAuth(1L, "uid", AuthType.teamNameAuth)).willReturn(true);
+		given(teamUserService.isUserHasAuth(1L, "uid", AuthType.teamnameauth)).willReturn(true);
 		TeamDto.UpdateRequest updateRequest = TeamDto.UpdateRequest.builder()
 																	.name("changed name")
 																	.descript("changed descipt")
@@ -180,7 +183,7 @@ public class TeamControllerTest extends ControllerTest {
 						ApiDocumentUtils.getDocumentResponse(),
 						requestFields(
 							fieldWithPath("name").type(JsonFieldType.STRING).description("팀 이름"),
-							fieldWithPath("descript").type(JsonFieldType.STRING).description("팀 설명")
+							fieldWithPath("descript").type(JsonFieldType.STRING).description("팀 설명").optional()
 							)
 						));
 	};

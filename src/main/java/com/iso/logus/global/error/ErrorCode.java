@@ -20,7 +20,10 @@ public enum ErrorCode {
 	TEAM_AUTH_NOT_FOUND("-201", "해당 권한을 찾을 수 없습니다."),
 	TEAM_AUTH_DUPLICATION("-202", "중복된 이름을 가진 팀 권한이 존재합니다."),
 	MASTER_AUTH_ERROR("-203", "마스터 권한의 권한은 수정될 수 없습니다."),
-	SPECIAL_AUTH_DELETE_ERROR("-204", "팀 내의 특수 권한은 삭제할 수 없습니다.");
+	SPECIAL_AUTH_DELETE_ERROR("-204", "팀 내의 특수 권한은 삭제할 수 없습니다."),
+	
+	/* Log Exception : -3xx */
+	LOG_NOT_FOUND("-300", "해당 글을 찾을 수 없습니다.");
 	
 	private String code;
 	private String message;

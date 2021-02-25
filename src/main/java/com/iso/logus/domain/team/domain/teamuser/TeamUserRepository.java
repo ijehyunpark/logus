@@ -17,6 +17,6 @@ public interface TeamUserRepository extends JpaRepository<TeamUser, Long>{
 	
 	void deleteByTeamIdAndUserUid(long teamId, String uid);
 	
-	@Query(value = "SELECT u FROM TeamUser u WHERE u.id = (SELECT u.id FROM TeamUser u LEFT JOIN TeamAuth a WHERE u.team.id = :teamId AND a.type = :type)")
+	@Query(value = "SELECT u FROM TeamUser u LEFT JOIN TeamAuth a ON u.teamAuth.id = a.id WHERE u.team.id = :teamId AND a.type = :type")
 	List<TeamUser>findByTeamAuthType(@Param("teamId") long teamId, @Param("type") int type);
 }

@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -45,8 +44,7 @@ public class TeamAuthControllerTest extends ControllerTest {
 	@MockBean 
 	private TeamUserService teamUserService;
 	
-	@Autowired
-	private TeamTestSampleData sampleData;
+	private TeamTestSampleData sampleData = new TeamTestSampleData();
 	
 	private Team team;
 	
@@ -79,15 +77,15 @@ public class TeamAuthControllerTest extends ControllerTest {
 						responseFields(
 								fieldWithPath("[].name").description("권한 이름"),
 								fieldWithPath("[].type").description("팀 권한 분류"),
-								fieldWithPath("[].masterAuth.teamNameAuth").description("팀 이름 변경 권한 여부"),
-								fieldWithPath("[].masterAuth.authManageAuth").description("팀 권한 관리 권한 여부"),
-								fieldWithPath("[].masterAuth.logMasterAuth").description("모든 로그 조작 권한"),
+								fieldWithPath("[].masterAuth.teamNameAuth").description("팀이름 및 설명 수정 권한"),
+								fieldWithPath("[].masterAuth.authManageAuth").description("팀내 권한 조작 관련 권한"),
+								fieldWithPath("[].masterAuth.logMasterAuth").description("모든 게시글 조작 권한"),
 								fieldWithPath("[].masterAuth.calendarMasterAuth").description("모든 캘린더 조작 권한"),
-								fieldWithPath("[].memberControllAuth.inviteAuth").description("팀 초대 권한 여부"),
-								fieldWithPath("[].memberControllAuth.inviteAcceptAuth").description("팀 초대 수락 권한 여부"),
-								fieldWithPath("[].memberControllAuth.quitAuth").description("팀 추방 권한 여부"),
-								fieldWithPath("[].activeAuth.logWriteAuth").description("글 쓰기 권한"),
-								fieldWithPath("[].activeAuth.replyWriteAuth").description("댓글 쓰기 권한"),
+								fieldWithPath("[].memberControllAuth.inviteAuth").description("초대 권한"),
+								fieldWithPath("[].memberControllAuth.inviteAcceptAuth").description("가입 승인 권한"),
+								fieldWithPath("[].memberControllAuth.quitAuth").description("추방 권한"),
+								fieldWithPath("[].activeAuth.logWriteAuth").description("게시글 작성 권한"),
+								fieldWithPath("[].activeAuth.replyWriteAuth").description("댓글 작성 권한"),
 								fieldWithPath("[].activeAuth.toDoAuth").description("toDoList 조작 권한"),
 								fieldWithPath("[].activeAuth.calendarAuth").description("캘린더 조작 권한")
 							)
@@ -99,7 +97,7 @@ public class TeamAuthControllerTest extends ControllerTest {
 		//given
 		String token = jwtTokenProvider.createToken("uid");
 		
-		given(teamUserService.isUserHasAuth(1L, "uid", AuthType.authManageAuth)).willReturn(true);
+		given(teamUserService.isUserHasAuth(1L, "uid", AuthType.authmanageauth)).willReturn(true);
 		TeamAuthDto.SaveRequest saveRequest = sampleData.saveRequestBuilder(1);
 		
 		//when
@@ -116,15 +114,15 @@ public class TeamAuthControllerTest extends ControllerTest {
 						requestFields(
 							fieldWithPath("teamId").type(JsonFieldType.NUMBER).description("팀 식별자"),	
 							fieldWithPath("name").type(JsonFieldType.STRING).description("권한 이름"),
-							fieldWithPath("masterAuth.teamNameAuth").type(JsonFieldType.BOOLEAN).description("팀 이름 변경 권한 여부").optional(),
-							fieldWithPath("masterAuth.authManageAuth").type(JsonFieldType.BOOLEAN).description("팀 권한 관리 권한 여부").optional(),
+							fieldWithPath("masterAuth.teamNameAuth").type(JsonFieldType.BOOLEAN).description("팀이름 및 설명 수정 권한부").optional(),
+							fieldWithPath("masterAuth.authManageAuth").type(JsonFieldType.BOOLEAN).description("팀내 권한 조작 관련 권한").optional(),
 							fieldWithPath("masterAuth.logMasterAuth").type(JsonFieldType.BOOLEAN).description("모든 로그 조작 권한").optional(),
 							fieldWithPath("masterAuth.calendarMasterAuth").type(JsonFieldType.BOOLEAN).description("모든 캘린더 조작 권한").optional(),
-							fieldWithPath("memberControllAuth.inviteAuth").type(JsonFieldType.BOOLEAN).description("팀 초대 권한 여부").optional(),
-							fieldWithPath("memberControllAuth.inviteAcceptAuth").type(JsonFieldType.BOOLEAN).description("팀 초대 수락 권한 여부").optional(),
-							fieldWithPath("memberControllAuth.quitAuth").type(JsonFieldType.BOOLEAN).description("팀 추방 권한 여부").optional(),
-							fieldWithPath("activeAuth.logWriteAuth").type(JsonFieldType.BOOLEAN).description("글 쓰기 권한").optional(),
-							fieldWithPath("activeAuth.replyWriteAuth").type(JsonFieldType.BOOLEAN).description("댓글 쓰기 권한").optional(),
+							fieldWithPath("memberControllAuth.inviteAuth").type(JsonFieldType.BOOLEAN).description("초대 권한").optional(),
+							fieldWithPath("memberControllAuth.inviteAcceptAuth").type(JsonFieldType.BOOLEAN).description("가입 승인 권한").optional(),
+							fieldWithPath("memberControllAuth.quitAuth").type(JsonFieldType.BOOLEAN).description("추방 권한").optional(),
+							fieldWithPath("activeAuth.logWriteAuth").type(JsonFieldType.BOOLEAN).description("글 작성 권한").optional(),
+							fieldWithPath("activeAuth.replyWriteAuth").type(JsonFieldType.BOOLEAN).description("댓글 작성 권한").optional(),
 							fieldWithPath("activeAuth.toDoAuth").type(JsonFieldType.BOOLEAN).description("toDoList 조작 권한").optional(),
 							fieldWithPath("activeAuth.calendarAuth").type(JsonFieldType.BOOLEAN).description("캘린더 조작 권한").optional()
 							)
@@ -137,7 +135,7 @@ public class TeamAuthControllerTest extends ControllerTest {
 		//given
 		String token = jwtTokenProvider.createToken("uid");
 		
-		given(teamUserService.isUserHasAuth(1L, "uid", AuthType.authManageAuth)).willReturn(true);
+		given(teamUserService.isUserHasAuth(1L, "uid", AuthType.authmanageauth)).willReturn(true);
 		TeamAuthDto.UpdateRequest updateRequest = sampleData.updateRequestBuilder(1, "anyString", "changed auth name", TeamAuthType.NONE);
 		
 		//when
@@ -156,15 +154,15 @@ public class TeamAuthControllerTest extends ControllerTest {
 							fieldWithPath("originName").type(JsonFieldType.STRING).description("기존 권한 이름"),
 							fieldWithPath("changeName").type(JsonFieldType.STRING).description("변경된 권한 이름"),
 							fieldWithPath("type").type(JsonFieldType.STRING).description("팀 권한 분류"),
-							fieldWithPath("masterAuth.teamNameAuth").type(JsonFieldType.BOOLEAN).description("팀 이름 변경 권한 여부").optional(),
-							fieldWithPath("masterAuth.authManageAuth").type(JsonFieldType.BOOLEAN).description("팀 권한 관리 권한 여부").optional(),
+							fieldWithPath("masterAuth.teamNameAuth").type(JsonFieldType.BOOLEAN).description("팀이름 및 설명 수정 권한부").optional(),
+							fieldWithPath("masterAuth.authManageAuth").type(JsonFieldType.BOOLEAN).description("팀내 권한 조작 관련 권한").optional(),
 							fieldWithPath("masterAuth.logMasterAuth").type(JsonFieldType.BOOLEAN).description("모든 로그 조작 권한").optional(),
 							fieldWithPath("masterAuth.calendarMasterAuth").type(JsonFieldType.BOOLEAN).description("모든 캘린더 조작 권한").optional(),
-							fieldWithPath("memberControllAuth.inviteAuth").type(JsonFieldType.BOOLEAN).description("팀 초대 권한 여부").optional(),
-							fieldWithPath("memberControllAuth.inviteAcceptAuth").type(JsonFieldType.BOOLEAN).description("팀 초대 수락 권한 여부").optional(),
-							fieldWithPath("memberControllAuth.quitAuth").type(JsonFieldType.BOOLEAN).description("팀 추방 권한 여부").optional(),
-							fieldWithPath("activeAuth.logWriteAuth").type(JsonFieldType.BOOLEAN).description("글 쓰기 권한").optional(),
-							fieldWithPath("activeAuth.replyWriteAuth").type(JsonFieldType.BOOLEAN).description("댓글 쓰기 권한").optional(),
+							fieldWithPath("memberControllAuth.inviteAuth").type(JsonFieldType.BOOLEAN).description("초대 권한").optional(),
+							fieldWithPath("memberControllAuth.inviteAcceptAuth").type(JsonFieldType.BOOLEAN).description("가입 승인 권한").optional(),
+							fieldWithPath("memberControllAuth.quitAuth").type(JsonFieldType.BOOLEAN).description("추방 권한").optional(),
+							fieldWithPath("activeAuth.logWriteAuth").type(JsonFieldType.BOOLEAN).description("글 작성 권한").optional(),
+							fieldWithPath("activeAuth.replyWriteAuth").type(JsonFieldType.BOOLEAN).description("댓글 작성 권한").optional(),
 							fieldWithPath("activeAuth.toDoAuth").type(JsonFieldType.BOOLEAN).description("toDoList 조작 권한").optional(),
 							fieldWithPath("activeAuth.calendarAuth").type(JsonFieldType.BOOLEAN).description("캘린더 조작 권한").optional()
 							)
@@ -176,7 +174,7 @@ public class TeamAuthControllerTest extends ControllerTest {
 		//given
 		String token = jwtTokenProvider.createToken("uid");
 		
-		given(teamUserService.isUserHasAuth(1L, "uid", AuthType.authManageAuth)).willReturn(true);
+		given(teamUserService.isUserHasAuth(1L, "uid", AuthType.authmanageauth)).willReturn(true);
 		
 		//when
 		ResultActions result = mockMvc.perform(delete("/api/team/auth/1/anyString")

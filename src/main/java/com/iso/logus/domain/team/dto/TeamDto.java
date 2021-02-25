@@ -36,11 +36,13 @@ public class TeamDto {
 		@NotEmpty
 		private String name;
 		private String descript;
+		private String customName;
 		
 		@Builder
-		public CreateRequest(String name, String descript) {
+		public CreateRequest(String name, String descript, String customName) {
 			this.name = name;
 			this.descript = descript;
+			this.customName = customName;
 		}
 		
 		public Team toEntity() {

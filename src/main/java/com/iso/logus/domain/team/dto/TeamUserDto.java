@@ -34,7 +34,7 @@ public class TeamUserDto {
 	}
 	
 	@Getter
-	private static class TeamResponseData {
+	public static class TeamResponseData {
 		private Long id;
 		private String name;
 		private String descript;

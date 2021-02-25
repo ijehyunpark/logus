@@ -1,8 +1,8 @@
 package com.iso.logus.domain.team.domain.team;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.iso.logus.domain.log.domain.Log;
 import com.iso.logus.domain.team.domain.teamauth.TeamAuth;
 import com.iso.logus.domain.team.domain.teamuser.TeamUser;
 import com.iso.logus.domain.team.dto.TeamDto;
@@ -38,10 +39,13 @@ public class Team extends TimeEntity {
 	private String descript;
 	
 	@OneToMany(mappedBy = "team", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<TeamAuth> teamAuths = new ArrayList<>();
+	private Set<TeamAuth> teamAuths = new HashSet<>();
 	
 	@OneToMany(mappedBy = "team", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<TeamUser> teamUsers = new ArrayList<>();
+	private Set<TeamUser> teamUsers = new HashSet<>();
+	
+	@OneToMany(mappedBy = "team", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+	private Set<Log> logList = new HashSet<>();
 	
 	@Builder
 	public Team(String name, String descript) {
