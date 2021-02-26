@@ -53,7 +53,7 @@ public class Log extends TimeEntity {
 	private Set<Log> childLogs = new HashSet<Log>();
 	
 	@Builder
-	public Log(Team team, User author, String title, String content, Log parentLog) {
+	private Log(Team team, User author, String title, String content, Log parentLog) {
 		this.team = team;
 		this.author = author;
 		this.title = title;

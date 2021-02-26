@@ -49,7 +49,7 @@ public class TeamAuth {
 	private ActiveAuth activeAuth;
 	
 	@Builder
-	public TeamAuth(Team team, String name, MasterAuth masterAuth, MemberControllAuth memberControllAuth, ActiveAuth activeAuth) {
+	private TeamAuth(Team team, String name, MasterAuth masterAuth, MemberControllAuth memberControllAuth, ActiveAuth activeAuth) {
 		this.team = team;
 		this.name = name;
 		this.masterAuth = masterAuth;

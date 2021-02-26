@@ -48,7 +48,7 @@ public class Team extends TimeEntity {
 	private Set<Log> logList = new HashSet<>();
 	
 	@Builder
-	public Team(String name, String descript) {
+	private Team(String name, String descript) {
 		this.name = name;
 		this.descript = descript;
 	}

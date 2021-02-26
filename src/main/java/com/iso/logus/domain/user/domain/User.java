@@ -47,7 +47,7 @@ public class User extends TimeEntity implements UserDetails {
 	private Set<Log> logList = new HashSet<>();
 	
 	@Builder
-	public User (String uid, String name, Password password){
+	private User (String uid, String name, Password password){
 		this.uid = uid;
 		this.name = name;
 		this.passwordDetail = password;

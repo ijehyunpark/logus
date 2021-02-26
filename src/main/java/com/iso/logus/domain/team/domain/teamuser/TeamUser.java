@@ -43,7 +43,7 @@ public class TeamUser extends TimeEntity {
 	private String customName;
 	
 	@Builder
-	public TeamUser(Team team, User user, TeamAuth teamAuth, String customName) {
+	private TeamUser(Team team, User user, TeamAuth teamAuth, String customName) {
 		this.team = team;
 		this.user = user;
 		this.teamAuth = teamAuth;

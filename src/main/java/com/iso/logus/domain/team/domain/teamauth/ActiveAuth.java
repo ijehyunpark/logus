@@ -24,7 +24,7 @@ public class ActiveAuth implements DetailAuth {
 	private boolean calendarAuth;
 	
 	@Builder
-	public ActiveAuth(boolean logWriteAuth, boolean replyWriteAuth, boolean toDoAuth, boolean calendarAuth) {
+	private ActiveAuth(boolean logWriteAuth, boolean replyWriteAuth, boolean toDoAuth, boolean calendarAuth) {
 		this.logWriteAuth = logWriteAuth;
 		this.replyWriteAuth = replyWriteAuth;
 		this.toDoAuth = toDoAuth;

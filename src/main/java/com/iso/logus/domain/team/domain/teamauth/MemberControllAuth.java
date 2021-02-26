@@ -21,7 +21,7 @@ public class MemberControllAuth implements DetailAuth {
 	private boolean quitAuth;
 	
 	@Builder
-	public MemberControllAuth(boolean inviteAuth, boolean inviteAcceptAuth, boolean quitAuth) {
+	private MemberControllAuth(boolean inviteAuth, boolean inviteAcceptAuth, boolean quitAuth) {
 		this.inviteAuth = inviteAuth;
 		this.inviteAcceptAuth = inviteAcceptAuth;
 		this.quitAuth = quitAuth;

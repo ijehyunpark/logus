@@ -23,7 +23,7 @@ public class Password {
 	private int failedCount;
 	
 	@Builder
-	public Password(final String value) {
+	private Password(final String value) {
 		this.value = encodePassword(value);
 		resetFailedCount();
 	}

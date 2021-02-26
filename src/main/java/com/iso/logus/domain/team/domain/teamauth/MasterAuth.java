@@ -24,7 +24,7 @@ public class MasterAuth implements DetailAuth {
 	private boolean calendarMasterAuth;
 	
 	@Builder
-	public MasterAuth(boolean teamNameAuth, boolean authManageAuth, boolean logMasterAuth, boolean calendarMasterAuth) {
+	private MasterAuth(boolean teamNameAuth, boolean authManageAuth, boolean logMasterAuth, boolean calendarMasterAuth) {
 		this.teamNameAuth = teamNameAuth;
 		this.authManageAuth = authManageAuth;
 		this.logMasterAuth = logMasterAuth;
